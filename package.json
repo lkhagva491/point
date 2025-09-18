@@ -17,6 +17,9 @@
     "build:admin": "npm run build --workspace=admin-web",
     "build:user": "npm run build --workspace=user-web",
     "start": "concurrently \"npm run start --workspace=backend\" \"npm run start --workspace=admin-web\" \"npm run start --workspace=user-web\"",
+    "start:backend": "npm run start --workspace=backend",
+    "start:admin": "npm run start --workspace=admin-web",
+    "start:user": "npm run start --workspace=user-web",
     "lint": "npm run lint --workspaces",
     "test": "npm run test --workspaces",
     "clean": "npm run clean --workspaces && rimraf node_modules"
