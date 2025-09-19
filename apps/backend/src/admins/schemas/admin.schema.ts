@@ -1,10 +1,12 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document } from 'mongoose';
+import { Document, Types } from 'mongoose';
 
 export type AdminDocument = Admin & Document;
 
 @Schema({ timestamps: true })
 export class Admin {
+  _id: Types.ObjectId; // Explicitly define _id
+
   @Prop({ required: true })
   username: string;
 

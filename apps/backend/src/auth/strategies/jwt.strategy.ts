@@ -24,10 +24,10 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     
     if (userType === 'admin') {
       const admin = await this.adminsService.findById(payload.sub);
-      return admin ? { ...admin, userType: 'admin' } : null;
+      return admin ? payload : null; // Return payload directly
     } else {
       const user = await this.usersService.findById(payload.sub);
-      return user ? { ...user, userType: 'user' } : null;
+      return user ? payload : null; // Return payload directly
     }
   }
 }

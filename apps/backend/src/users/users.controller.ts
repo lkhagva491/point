@@ -1,7 +1,8 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Req, UnauthorizedException } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
+import { ChangePasswordDto } from './dto/change-password.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 
 @ApiTags('Users')
@@ -40,6 +41,23 @@ export class UsersController {
   @ApiResponse({ status: 404, description: 'User not found' })
   update(@Param('id') id: string, @Body() updateUserDto: Partial<CreateUserDto>) {
     return this.usersService.update(id, updateUserDto);
+  }
+
+  @Patch(':id/password')
+  @ApiOperation({ summary: 'Change user password' })
+  @ApiResponse({ status: 200, description: 'Password changed successfully' })
+  @ApiResponse({ status: 400, description: 'Invalid current password or passwords do not match' })
+  @ApiResponse({ status: 404, description: 'User not found' })
+  async changePassword(
+    @Param('id') id: string,
+    @Body() changePasswordDto: ChangePasswordDto,
+    @Req() req: any,
+  ) {
+    // Ensure the user is changing their own password or is an admin
+    if (req.user.userType !== 'admin' && req.user.sub !== id) {
+      throw new UnauthorizedException('You can only change your own password.');
+    }
+    return this.usersService.changePassword(id, changePasswordDto);
   }
 
   @Delete(':id')

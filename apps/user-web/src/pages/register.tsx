@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { useRouter } from 'next/router'
 import axios from 'axios'
 import Cookies from 'js-cookie'
+import { toast } from 'react-toastify'
 
 export default function Register() {
   const router = useRouter()

@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 import axios from 'axios'
 import Cookies from 'js-cookie'
+import Link from 'next/link'
 
 interface User {
   _id: string
@@ -81,7 +82,7 @@ export default function Dashboard() {
                 <div className="bg-primary-50 p-6 rounded-lg">
                   <h3 className="text-lg font-semibold text-primary-900 mb-2">Profile</h3>
                   <p className="text-primary-700 mb-4">Manage your account settings and personal information.</p>
-                  <button className="btn btn-primary">View Profile</button>
+                  <Link href="/change-password" className="btn btn-primary">Change Password</Link>
                 </div>
                 
                 <div className="bg-green-50 p-6 rounded-lg">

@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import axios from 'axios';
 import Cookies from 'js-cookie';
 import { useRouter } from 'next/router';
+import { toast } from 'react-toastify';
 
 interface User {
   _id: string;
@@ -40,6 +41,7 @@ export default function EditUserModal({ user, onClose, onUserUpdated }: EditUser
         headers: { Authorization: `Bearer ${token}` },
         withCredentials: true,
       });
+      toast.success('User updated successfully!');
       onUserUpdated();
       onClose();
     } catch (err: any) {

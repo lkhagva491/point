@@ -4,6 +4,7 @@ import { useRouter } from 'next/router'
 import Link from 'next/link'
 import axios from 'axios'
 import Cookies from 'js-cookie'
+import { toast } from 'react-toastify'
 
 export default function Login() {
   const router = useRouter()
@@ -26,6 +27,7 @@ export default function Login() {
       Cookies.set('token', access_token, { expires: 7 })
       Cookies.set('user', JSON.stringify(user), { expires: 7 })
       
+      toast.success('Login successful!');
       router.push('/dashboard')
     } catch (err: any) {
       setError(err.response?.data?.message || 'Login failed')
@@ -88,6 +90,7 @@ export default function Login() {
                   placeholder="Password"
                   value={formData.password}
                   onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                  autoComplete="off"
                 />
               </div>
             </div>

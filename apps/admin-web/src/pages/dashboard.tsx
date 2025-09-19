@@ -1,9 +1,10 @@
 import Head from 'next/head'
-import { useEffect, useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/router'
 import axios from 'axios'
 import Cookies from 'js-cookie'
 import EditUserModal from '../components/EditUserModal'
+import { toast } from 'react-toastify'
 
 interface User {
   _id: string
