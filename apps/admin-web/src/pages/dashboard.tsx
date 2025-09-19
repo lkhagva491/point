@@ -3,9 +3,10 @@ import { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 import axios from 'axios'
 import Cookies from 'js-cookie'
+import EditUserModal from '../components/EditUserModal'
 
 interface User {
-  id: string
+  _id: string
   email: string
   username: string
   userType: string
@@ -19,6 +20,7 @@ export default function Dashboard() {
   const [user, setUser] = useState<User | null>(null)
   const [users, setUsers] = useState<User[]>([])
   const [loading, setLoading] = useState(true)
+  const [editingUser, setEditingUser] = useState<User | null>(null)
 
   useEffect(() => {
     const token = Cookies.get('token')
@@ -34,16 +36,50 @@ export default function Dashboard() {
   }, [router])
 
   const fetchUsers = async () => {
+    setLoading(true)
     try {
       const token = Cookies.get('token')
       const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/users`, {
-        headers: { Authorization: `Bearer ${token}` }
+        headers: { Authorization: `Bearer ${token}` },
+        withCredentials: true,
       })
       setUsers(response.data)
-    } catch (error) {
-      console.error('Failed to fetch users:', error)
+    } catch (error: any) {
+      if (error.response?.status === 401) {
+        Cookies.remove('token')
+        Cookies.remove('user')
+        router.push('/?message=Session expired. Please log in again.')
+      } else {
+        console.error('Failed to fetch users:', error)
+      }
     } finally {
       setLoading(false)
+    }
+  }
+
+  const handleEdit = (userToEdit: User) => {
+    setEditingUser(userToEdit)
+  }
+
+  const handleDelete = async (userId: string) => {
+    if (window.confirm('Are you sure you want to delete this user?')) {
+      try {
+        const token = Cookies.get('token')
+        await axios.delete(`${process.env.NEXT_PUBLIC_API_URL}/users/${userId}`, {
+          headers: { Authorization: `Bearer ${token}` },
+          withCredentials: true,
+        })
+        fetchUsers() // Refresh the user list
+      } catch (error: any) {
+        if (error.response?.status === 401) {
+          Cookies.remove('token')
+          Cookies.remove('user')
+          router.push('/?message=Session expired. Please log in again.')
+        } else {
+          console.error('Failed to delete user:', error)
+          alert('Failed to delete user')
+        }
+      }
     }
   }
 
@@ -53,7 +89,11 @@ export default function Dashboard() {
     router.push('/')
   }
 
-  if (loading) {
+  const handleCloseModal = () => {
+    setEditingUser(null)
+  }
+
+  if (loading && !editingUser) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-lg">Loading...</div>
@@ -112,7 +152,7 @@ export default function Dashboard() {
                   </thead>
                   <tbody className="bg-white divide-y divide-gray-200">
                     {users.map((user) => (
-                      <tr key={user.id}>
+                      <tr key={user._id}>
                         <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
                           {user.username}
                         </td>
@@ -129,10 +169,16 @@ export default function Dashboard() {
                           </span>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                          <button className="text-primary-600 hover:text-primary-900 mr-3">
+                          <button
+                            onClick={() => handleEdit(user)}
+                            className="text-primary-600 hover:text-primary-900 mr-3"
+                          >
                             Edit
                           </button>
-                          <button className="text-red-600 hover:text-red-900">
+                          <button
+                            onClick={() => handleDelete(user._id)}
+                            className="text-red-600 hover:text-red-900"
+                          >
                             Delete
                           </button>
                         </td>
@@ -145,6 +191,14 @@ export default function Dashboard() {
           </div>
         </main>
       </div>
+
+      {editingUser && (
+        <EditUserModal
+          user={editingUser}
+          onClose={handleCloseModal}
+          onUserUpdated={fetchUsers}
+        />
+      )}
     </>
   )
 }

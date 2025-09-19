@@ -3,6 +3,7 @@ import Link from 'next/link'
 import { useState } from 'react'
 import { useRouter } from 'next/router'
 import axios from 'axios'
+import Cookies from 'js-cookie'
 
 export default function Register() {
   const router = useRouter()
@@ -27,18 +28,25 @@ export default function Register() {
     }
 
     try {
-      await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/auth/register`, {
+      const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/auth/register`, {
         username: formData.username,
         email: formData.email,
         password: formData.password,
         userType: 'user',
-      })
+      }, { withCredentials: true })
       
-      router.push('/login?message=Registration successful! Please sign in.')
+      const { access_token, user } = response.data
+      
+      Cookies.set('token', access_token, { expires: 7 })
+      Cookies.set('user', JSON.stringify(user), { expires: 7 })
+      
+      router.push('/dashboard')
+
     } catch (err: any) {
-      setError(err.response?.data?.message || 'Registration failed')
+      console.error('Frontend: Error during registration:', err);
+      setError(err.response?.data?.message || 'Registration failed');
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
   }
 

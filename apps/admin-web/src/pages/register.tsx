@@ -1,13 +1,14 @@
 import Head from 'next/head'
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { useRouter } from 'next/router'
 import Link from 'next/link'
 import axios from 'axios'
 import Cookies from 'js-cookie'
 
-export default function Login() {
+export default function Register() {
   const router = useRouter()
   const [formData, setFormData] = useState({
+    username: '',
     email: '',
     password: '',
   })
@@ -20,34 +21,40 @@ export default function Login() {
     setError('')
 
     try {
-      const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/auth/login`, { ...formData, userType: 'admin' }, { withCredentials: true })
+      const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/auth/register`, {
+        ...formData,
+        userType: 'admin',
+      }, { withCredentials: true })
+      
       const { access_token, user } = response.data
       
       Cookies.set('token', access_token, { expires: 7 })
       Cookies.set('user', JSON.stringify(user), { expires: 7 })
       
       router.push('/dashboard')
+
     } catch (err: any) {
-      setError(err.response?.data?.message || 'Login failed')
+      console.error('Frontend: Error during registration:', err);
+      setError(err.response?.data?.message || 'Registration failed');
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
   }
 
   return (
     <>
       <Head>
-        <title>Admin Login - Point</title>
+        <title>Admin Registration - Point</title>
       </Head>
       
       <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
         <div className="max-w-md w-full space-y-8">
           <div>
             <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-              Admin Login
+              Admin Registration
             </h2>
             <p className="mt-2 text-center text-sm text-gray-600">
-              Sign in to your admin account
+              Create a new admin account
             </p>
           </div>
           
@@ -59,6 +66,22 @@ export default function Login() {
             )}
             
             <div className="space-y-4">
+              <div>
+                <label htmlFor="username" className="block text-sm font-medium text-gray-700">
+                  Username
+                </label>
+                <input
+                  id="username"
+                  name="username"
+                  type="text"
+                  required
+                  className="input mt-1"
+                  placeholder="adminuser"
+                  value={formData.username}
+                  onChange={(e) => setFormData({ ...formData, username: e.target.value })}
+                />
+              </div>
+
               <div>
                 <label htmlFor="email" className="block text-sm font-medium text-gray-700">
                   Email address
@@ -98,14 +121,14 @@ export default function Login() {
                 disabled={loading}
                 className="btn btn-primary w-full"
               >
-                {loading ? 'Signing in...' : 'Sign in'}
+                {loading ? 'Creating account...' : 'Create account'}
               </button>
             </div>
           </form>
 
           <div className="text-sm text-center">
-            <Link href="/register" className="font-medium text-indigo-600 hover:text-indigo-500">
-              Don't have an account? Sign up
+            <Link href="/" className="font-medium text-indigo-600 hover:text-indigo-500">
+              Already have an account? Sign in
             </Link>
           </div>
         </div>

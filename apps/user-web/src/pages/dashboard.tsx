@@ -5,7 +5,7 @@ import axios from 'axios'
 import Cookies from 'js-cookie'
 
 interface User {
-  id: string
+  _id: string
   email: string
   username: string
   userType: string

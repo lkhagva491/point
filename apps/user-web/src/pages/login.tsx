@@ -20,7 +20,7 @@ export default function Login() {
     setError('')
 
     try {
-      const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/auth/login`, formData)
+      const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/auth/login`, formData, { withCredentials: true })
       const { access_token, user } = response.data
       
       Cookies.set('token', access_token, { expires: 7 })

@@ -1,4 +1,4 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { Injectable, UnauthorizedException, ConflictException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { UsersService } from '../users/users.service';
 import { AdminsService } from '../admins/admins.service';
@@ -12,34 +12,32 @@ export class AuthService {
     private jwtService: JwtService,
   ) {}
 
-  async validateUser(email: string, password: string): Promise<any> {
-    let user = await this.usersService.findByEmail(email);
-    let userType: 'user' | 'admin' = 'user';
+  async validateUser(
+    email: string,
+    password: string,
+    userType: 'user' | 'admin',
+  ): Promise<any> {
+    let user;
 
-    if (!user) {
-      const admin = await this.adminsService.findByEmail(email);
-      if (admin) {
-        user = {
-          ...admin,
-          point: 0, // Default for admins
-        };
-        userType = 'admin';
-      }
+    if (userType === 'admin') {
+      user = await this.adminsService.findByEmail(email);
+    } else {
+      user = await this.usersService.findByEmail(email);
     }
 
-    if (user && await bcrypt.compare(password, user.password)) {
-      // password field-ийг салгаж хаяна
+    if (user && (await bcrypt.compare(password, user.password))) {
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const { password: _, ...result } = user;
+      const { password: _, ...result } = user.toObject ? user.toObject() : user;
       return { ...result, userType };
     }
+
     return null;
   }
 
   async login(user: any) {
     const payload = {
       email: user.email,
-      sub: user._id,
+      sub: user._id.toString(),
       userType: user.userType,
       role: user.userType === 'admin' ? 'admin' : 'user',
     };
@@ -47,7 +45,7 @@ export class AuthService {
     return {
       access_token: this.jwtService.sign(payload),
       user: {
-        id: user._id,
+        id: user._id.toString(),
         email: user.email,
         username: user.username,
         userType: user.userType,
@@ -58,33 +56,43 @@ export class AuthService {
     };
   }
 
-  async register(
+    async register(
     email: string,
     password: string,
     username: string,
     userType: 'user' | 'admin' = 'user',
   ) {
+    if (userType === 'admin') {
+      const existingAdmin = await this.adminsService.findByEmail(email);
+      if (existingAdmin) {
+        throw new ConflictException('Email already exists');
+      }
+    } else {
+      const existingUser = await this.usersService.findByEmail(email);
+      if (existingUser) {
+        throw new ConflictException('Email already exists');
+      }
+    }
+
     const hashedPassword = await bcrypt.hash(password, 10);
 
+    let newUser;
     if (userType === 'admin') {
-      const admin = await this.adminsService.create({
+      newUser = await this.adminsService.create({
         email,
         password: hashedPassword,
         username,
         role: 'admin',
       });
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const { password: _, ...result } = admin;
-      return result;
     } else {
-      const user = await this.usersService.create({
+      newUser = await this.usersService.create({
         email,
         password: hashedPassword,
         username,
       });
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const { password: _, ...result } = user;
-      return result;
     }
+
+    const userObject = newUser.toObject ? newUser.toObject() : newUser;
+    return this.login({ ...userObject, userType });
   }
 }
