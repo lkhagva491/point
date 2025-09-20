@@ -19,7 +19,7 @@ export default function Home() {
                 <Link href="/login" className="text-gray-700 hover:text-gray-900">
                   Login
                 </Link>
-                <Link href="/register" className="btn btn-primary">
+                <Link href="/register" className="text-gray-700 hover:text-gray-900">
                   Sign Up
                 </Link>
               </nav>
@@ -33,11 +33,10 @@ export default function Home() {
             <div className="max-w-7xl mx-auto py-24 px-4 sm:px-6 lg:px-8">
               <div className="text-center">
                 <h2 className="text-4xl font-extrabold text-white sm:text-5xl md:text-6xl">
-                  Welcome to Point
+                  Point: AI-Powered Financial Management
                 </h2>
                 <p className="mt-3 max-w-md mx-auto text-base text-primary-100 sm:text-lg md:mt-5 md:text-xl md:max-w-3xl">
-                  A modern, scalable web application built with NextJS, NestJS, and MongoDB.
-                  Experience the power of full-stack development.
+                  Experience seamless financial management with Point, an AI-powered platform designed to optimize your transactions and provide intelligent insights.
                 </p>
                 <div className="mt-5 max-w-md mx-auto sm:flex sm:justify-center md:mt-8">
                   <div className="rounded-md shadow">
@@ -55,59 +54,66 @@ export default function Home() {
             </div>
           </div>
 
-          {/* Features Section */}
-          <div className="py-12 bg-white">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-              <div className="lg:text-center">
-                <h2 className="text-base text-primary-600 font-semibold tracking-wide uppercase">Features</h2>
-                <p className="mt-2 text-3xl leading-8 font-extrabold tracking-tight text-gray-900 sm:text-4xl">
-                  Everything you need to get started
-                </p>
-                <p className="mt-4 max-w-2xl text-xl text-gray-500 lg:mx-auto">
-                  Built with modern technologies and best practices for optimal performance and developer experience.
-                </p>
-              </div>
+          
+        </main>
 
-              <div className="mt-10">
-                <div className="space-y-10 md:space-y-0 md:grid md:grid-cols-3 md:gap-x-8 md:gap-y-10">
-                  <div className="relative">
-                    <div className="card">
-                      <h3 className="text-lg leading-6 font-medium text-gray-900">Modern Stack</h3>
-                      <p className="mt-2 text-base text-gray-500">
-                        Built with NextJS, NestJS, MongoDB, and TypeScript for a robust and scalable application.
-                      </p>
-                    </div>
+        {/* AI Capabilities Section */}
+        <div className="py-12 bg-gray-100">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="lg:text-center">
+              <h2 className="text-base text-primary-600 font-semibold tracking-wide uppercase">AI Capabilities</h2>
+              <p className="mt-2 text-3xl leading-8 font-extrabold tracking-tight text-gray-900 sm:text-4xl">
+                Intelligent Financial Insights at Your Fingertips
+              </p>
+              <p className="mt-4 max-w-2xl text-xl text-gray-500 lg:mx-auto">
+                Point leverages advanced artificial intelligence to provide personalized financial analysis, fraud detection, and spending pattern recognition, helping you make smarter financial decisions.
+              </p>
+            </div>
+            <div className="mt-10">
+              <div className="space-y-10 md:space-y-0 md:grid md:grid-cols-2 md:gap-x-8 md:gap-y-10">
+                <div className="relative">
+                  <div className="card">
+                    <h3 className="text-lg leading-6 font-medium text-gray-900">Personalized Financial Analysis</h3>
+                    <p className="mt-2 text-base text-gray-500">
+                      Our AI analyzes your spending habits and income to provide tailored recommendations for saving and investment.
+                    </p>
                   </div>
-
-                  <div className="relative">
-                    <div className="card">
-                      <h3 className="text-lg leading-6 font-medium text-gray-900">Authentication</h3>
-                      <p className="mt-2 text-base text-gray-500">
-                        Secure JWT-based authentication with role-based access control for admin and user interfaces.
-                      </p>
-                    </div>
+                </div>
+                <div className="relative">
+                  <div className="card">
+                    <h3 className="text-lg leading-6 font-medium text-gray-900">Real-time Fraud Detection</h3>
+                    <p className="mt-2 text-base text-gray-500">
+                      Advanced algorithms monitor your transactions for suspicious activity, ensuring the security of your funds.
+                    </p>
                   </div>
-
-                  <div className="relative">
-                    <div className="card">
-                      <h3 className="text-lg leading-6 font-medium text-gray-900">Responsive Design</h3>
-                      <p className="mt-2 text-base text-gray-500">
-                        Beautiful, responsive UI built with Tailwind CSS that works perfectly on all devices.
-                      </p>
-                    </div>
+                </div>
+                <div className="relative">
+                  <div className="card">
+                    <h3 className="text-lg leading-6 font-medium text-gray-900">Smart Budgeting & Forecasting</h3>
+                    <p className="mt-2 text-base text-gray-500">
+                      Predict future expenses and optimize your budget with AI-driven forecasting tools.
+                    </p>
+                  </div>
+                </div>
+                <div className="relative">
+                  <div className="card">
+                    <h3 className="text-lg leading-6 font-medium text-gray-900">Spending Pattern Recognition</h3>
+                    <p className="mt-2 text-base text-gray-500">
+                      Understand where your money goes with intelligent categorization and visualization of your spending.
+                    </p>
                   </div>
                 </div>
               </div>
             </div>
           </div>
-        </main>
+        </div>
 
         {/* Footer */}
         <footer className="bg-gray-800">
           <div className="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
             <div className="text-center">
               <p className="text-gray-400">
-                © 2024 Point. Built with ❤️ using modern web technologies.
+                © 2025 Point. Built with ❤️ using modern web technologies.
               </p>
             </div>
           </div>

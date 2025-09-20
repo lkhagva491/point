@@ -55,6 +55,11 @@ export default function Login() {
               <Link href="/register" className="font-medium text-primary-600 hover:text-primary-500">
                 create a new account
               </Link>
+              {' '}
+              or{' '}
+              <Link href="/" className="font-medium text-primary-600 hover:text-primary-500">
+                go to Home
+              </Link>
             </p>
           </div>
           
