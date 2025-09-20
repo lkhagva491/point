@@ -5,6 +5,7 @@ import { useRouter } from 'next/router'
 import axios from 'axios'
 import Cookies from 'js-cookie'
 import { toast } from 'react-toastify'
+import { Button } from '@point/ui'
 
 export default function Register() {
   const router = useRouter()
@@ -145,13 +146,14 @@ export default function Register() {
             </div>
 
             <div>
-              <button
+              <Button
                 type="submit"
-                disabled={loading}
-                className="btn btn-primary w-full"
+                loading={loading}
+                className="w-full"
+                variant="primary"
               >
-                {loading ? 'Creating account...' : 'Create account'}
-              </button>
+                Create account
+              </Button>
             </div>
           </form>
         </div>

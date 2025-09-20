@@ -10,6 +10,7 @@
     "clean": "rimraf .next"
   },
   "dependencies": {
+    "@point/ui": "*",
     "@headlessui/react": "^1.7.17",
     "@heroicons/react": "^2.0.18",
     "@hookform/resolvers": "^3.3.2",
@@ -21,6 +22,7 @@
     "axios": "^1.6.2",
     "js-cookie": "^3.0.5",
     "next": "14.0.4",
+    "next-transpile-modules": "^10.0.1",
     "postcss": "^8",
     "react": "^18",
     "react-dom": "^18",

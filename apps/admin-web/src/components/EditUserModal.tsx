@@ -1,3 +1,4 @@
+import { Button } from '@point/ui';
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import Cookies from 'js-cookie';
@@ -88,12 +89,12 @@ export default function EditUserModal({ user, onClose, onUserUpdated }: EditUser
             </div>
           </div>
           <div className="mt-6 flex justify-end space-x-3">
-            <button type="button" onClick={onClose} className="btn btn-secondary">
+            <Button type="button" onClick={onClose} variant="secondary">
               Cancel
-            </button>
-            <button type="submit" disabled={loading} className="btn btn-primary">
-              {loading ? 'Saving...' : 'Save'}
-            </button>
+            </Button>
+            <Button type="submit" loading={loading} variant="primary">
+              Save
+            </Button>
           </div>
         </form>
       </div>

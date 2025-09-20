@@ -4,6 +4,7 @@ import { useRouter } from 'next/router';
 import axios from 'axios';
 import Cookies from 'js-cookie';
 import { toast } from 'react-toastify';
+import { Button } from '@point/ui';
 
 export default function ChangePassword() {
   const router = useRouter();
@@ -127,13 +128,14 @@ export default function ChangePassword() {
             </div>
 
             <div>
-              <button
+              <Button
                 type="submit"
-                disabled={loading}
-                className="btn btn-primary w-full"
+                loading={loading}
+                className="w-full"
+                variant="primary"
               >
-                {loading ? 'Changing...' : 'Change Password'}
-              </button>
+                Change Password
+              </Button>
             </div>
           </form>
         </div>

@@ -1,3 +1,4 @@
+import { Button } from '@point/ui';
 import Head from 'next/head'
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/router'
@@ -96,13 +97,14 @@ export default function Login() {
             </div>
 
             <div>
-              <button
+              <Button
                 type="submit"
-                disabled={loading}
-                className="btn btn-primary w-full"
+                loading={loading}
+                className="w-full"
+                variant="primary"
               >
-                {loading ? 'Signing in...' : 'Sign in'}
-              </button>
+                Sign in
+              </Button>
             </div>
           </form>
 
