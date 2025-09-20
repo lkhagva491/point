@@ -45,12 +45,12 @@ export default function Login() {
       </Head>
       
       <div className="bg-gradient-to-br from-gray-100 to-gray-200 min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-md w-full space-y-8 bg-white p-8 rounded-xl shadow-lg">
+        <div className="max-w-sm w-full space-y-8 bg-white p-8 rounded-xl shadow-lg">
           <div>
-            <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
+            <h2 className="mt-6 text-center text-3xl sm:text-4xl font-extrabold text-gray-900">
               Sign in to your account
             </h2>
-            <p className="mt-2 text-center text-sm text-gray-600">
+            <p className="mt-2 text-center text-sm sm:text-base text-gray-600">
               Or{' '}
               <Link href="/register" className="font-medium text-primary-600 hover:text-primary-500">
                 create a new account
