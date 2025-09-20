@@ -16,14 +16,10 @@ interface User {
   permissions?: number
 }
 
-export default function ChangePassword() {
+export default function Deposit() {
   const router = useRouter();
   const [user, setUser] = useState<User | null>(null)
-  const [formData, setFormData] = useState({
-    currentPassword: '',
-    newPassword: '',
-    confirmNewPassword: '',
-  });
+  const [amount, setAmount] = useState<number | string>('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
@@ -40,13 +36,12 @@ export default function ChangePassword() {
   }, [router])
 
   const handleSubmit = async (e: React.FormEvent) => {
-
     e.preventDefault();
     setLoading(true);
     setError('');
 
-    if (formData.newPassword !== formData.confirmNewPassword) {
-      setError('New password and confirm password do not match');
+    if (typeof amount !== 'number' || amount <= 0) {
+      setError('Please enter a valid amount');
       setLoading(false);
       return;
     }
@@ -55,24 +50,32 @@ export default function ChangePassword() {
       const token = Cookies.get('user_token');
       const currentUser = JSON.parse(Cookies.get('user_data') || '{}');
 
+      console.log('user', currentUser);
+
       if (!currentUser || !currentUser.email) {
         throw new Error('User not logged in');
       }
 
-      await axios.patch(`${process.env.NEXT_PUBLIC_API_URL}/users/${currentUser.email}/password`, formData, {
+      console.log('Deposit Request - User Email:', currentUser.email);
+
+      await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/transactions/deposit`, {
+        userEmail: currentUser.email,
+        requestedAmount: amount,
+      }, {
         headers: { Authorization: `Bearer ${token}` },
         withCredentials: true,
       });
 
-      toast.success('Password changed successfully!');
-      router.push('/dashboard');
+      toast.success('Deposit request submitted successfully!');
+      router.push('/transaction-history');
     } catch (err: any) {
       if (err.response?.status === 401) {
         Cookies.remove('user_token');
         Cookies.remove('user_data');
         router.push('/?message=Session expired. Please log in again.');
       } else {
-        setError(err.response?.data?.message || 'Failed to change password');
+        setError(err.response?.data?.message || 'Failed to submit deposit request');
+        toast.error(err.response?.data?.message || 'Failed to submit deposit request');
       }
     } finally {
       setLoading(false);
@@ -96,7 +99,7 @@ export default function ChangePassword() {
   return (
     <>
       <Head>
-        <title>Change Password - Point</title>
+        <title>Deposit Points - Point</title>
       </Head>
 
       <div className="min-h-screen bg-gray-50">
@@ -123,8 +126,11 @@ export default function ChangePassword() {
           <div className="px-4 py-6 sm:px-0">
             <div className="card">
               <div className="flex justify-between items-center mb-6">
-                <h2 className="text-2xl font-bold text-gray-900">Change Password</h2>
-                <Link href="/dashboard" className="btn btn-secondary">Dashboard</Link>
+                <h2 className="text-2xl font-bold text-gray-900">Deposit Points</h2>
+                <div className="flex space-x-2">
+                  <Link href="/dashboard" className="btn btn-secondary">Dashboard</Link>
+                  <Link href="/transaction-history" className="btn bg-purple-600 text-white hover:bg-purple-700">View History</Link>
+                </div>
               </div>
 
               <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
@@ -136,50 +142,18 @@ export default function ChangePassword() {
 
                 <div className="space-y-4">
                   <div>
-                    <label htmlFor="currentPassword" className="block text-sm font-medium text-gray-700">
-                      Current Password
+                    <label htmlFor="amount" className="block text-sm font-medium text-gray-700">
+                      Amount to Deposit
                     </label>
                     <input
-                      id="currentPassword"
-                      name="currentPassword"
-                      type="password"
+                      id="amount"
+                      name="amount"
+                      type="number"
                       required
                       className="input mt-1"
-                      value={formData.currentPassword}
-                      onChange={(e) => setFormData({ ...formData, currentPassword: e.target.value })}
-                      autoComplete="off"
-                    />
-                  </div>
-
-                  <div>
-                    <label htmlFor="newPassword" className="block text-sm font-medium text-gray-700">
-                      New Password
-                    </label>
-                    <input
-                      id="newPassword"
-                      name="newPassword"
-                      type="password"
-                      required
-                      className="input mt-1"
-                      value={formData.newPassword}
-                      onChange={(e) => setFormData({ ...formData, newPassword: e.target.value })}
-                      autoComplete="off"
-                    />
-                  </div>
-
-                  <div>
-                    <label htmlFor="confirmNewPassword" className="block text-sm font-medium text-gray-700">
-                      Confirm New Password
-                    </label>
-                    <input
-                      id="confirmNewPassword"
-                      name="confirmNewPassword"
-                      type="password"
-                      required
-                      className="input mt-1"
-                      value={formData.confirmNewPassword}
-                      onChange={(e) => setFormData({ ...formData, confirmNewPassword: e.target.value })}
-                      autoComplete="off"
+                      value={amount}
+                      onChange={(e) => setAmount(parseFloat(e.target.value))}
+                      min="1"
                     />
                   </div>
                 </div>
@@ -191,7 +165,7 @@ export default function ChangePassword() {
                     className="w-full"
                     variant="primary"
                   >
-                    Change Password
+                    Submit Deposit Request
                   </Button>
                 </div>
               </form>

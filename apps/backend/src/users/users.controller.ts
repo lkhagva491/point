@@ -1,70 +1,92 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Req, UnauthorizedException } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
-import { UsersService } from './users.service';
-import { CreateUserDto } from './dto/create-user.dto';
-import { ChangePasswordDto } from './dto/change-password.dto';
-import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  UseGuards,
+  Req,
+  UnauthorizedException,
+} from "@nestjs/common";
+import {
+  ApiTags,
+  ApiOperation,
+  ApiResponse,
+  ApiBearerAuth,
+} from "@nestjs/swagger";
+import { UsersService } from "./users.service";
+import { CreateUserDto } from "./dto/create-user.dto";
+import { ChangePasswordDto } from "./dto/change-password.dto";
+import { JwtAuthGuard } from "../auth/guards/jwt-auth.guard";
 
-@ApiTags('Users')
-@Controller('users')
+@ApiTags("Users")
+@Controller("users")
 @UseGuards(JwtAuthGuard)
 @ApiBearerAuth()
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @Post()
-  @ApiOperation({ summary: 'Create a new user' })
-  @ApiResponse({ status: 201, description: 'User created successfully' })
-  @ApiResponse({ status: 400, description: 'Bad request' })
+  @ApiOperation({ summary: "Create a new user" })
+  @ApiResponse({ status: 201, description: "User created successfully" })
+  @ApiResponse({ status: 400, description: "Bad request" })
   create(@Body() createUserDto: CreateUserDto) {
     return this.usersService.create(createUserDto);
   }
 
   @Get()
-  @ApiOperation({ summary: 'Get all users' })
-  @ApiResponse({ status: 200, description: 'Users retrieved successfully' })
+  @ApiOperation({ summary: "Get all users" })
+  @ApiResponse({ status: 200, description: "Users retrieved successfully" })
   findAll() {
     return this.usersService.findAll();
   }
 
-  @Get(':id')
-  @ApiOperation({ summary: 'Get user by ID' })
-  @ApiResponse({ status: 200, description: 'User retrieved successfully' })
-  @ApiResponse({ status: 404, description: 'User not found' })
-  findOne(@Param('id') id: string) {
-    return this.usersService.findById(id);
+  @Get(":email")
+  @ApiOperation({ summary: "Get user by email" })
+  @ApiResponse({ status: 200, description: "User retrieved successfully" })
+  @ApiResponse({ status: 404, description: "User not found" })
+  findOne(@Param("email") email: string) {
+    return this.usersService.findByEmail(email);
   }
 
-  @Patch(':id')
-  @ApiOperation({ summary: 'Update user' })
-  @ApiResponse({ status: 200, description: 'User updated successfully' })
-  @ApiResponse({ status: 404, description: 'User not found' })
-  update(@Param('id') id: string, @Body() updateUserDto: Partial<CreateUserDto>) {
-    return this.usersService.update(id, updateUserDto);
+  @Patch(":email")
+  @ApiOperation({ summary: "Update user by email" })
+  @ApiResponse({ status: 200, description: "User updated successfully" })
+  @ApiResponse({ status: 404, description: "User not found" })
+  update(
+    @Param("email") email: string,
+    @Body() updateUserDto: Partial<CreateUserDto>,
+  ) {
+    return this.usersService.updateByEmail(email, updateUserDto);
   }
 
-  @Patch(':id/password')
-  @ApiOperation({ summary: 'Change user password' })
-  @ApiResponse({ status: 200, description: 'Password changed successfully' })
-  @ApiResponse({ status: 400, description: 'Invalid current password or passwords do not match' })
-  @ApiResponse({ status: 404, description: 'User not found' })
+  @Patch(":email/password")
+  @ApiOperation({ summary: "Change user password by email" })
+  @ApiResponse({ status: 200, description: "Password changed successfully" })
+  @ApiResponse({
+    status: 400,
+    description: "Invalid current password or passwords do not match",
+  })
+  @ApiResponse({ status: 404, description: "User not found" })
   async changePassword(
-    @Param('id') id: string,
+    @Param("email") email: string,
     @Body() changePasswordDto: ChangePasswordDto,
     @Req() req: any,
   ) {
     // Ensure the user is changing their own password or is an admin
-    if (req.user.userType !== 'admin' && req.user.sub !== id) {
-      throw new UnauthorizedException('You can only change your own password.');
+    if (req.user.userType !== "admin" && req.user.email !== email) {
+      throw new UnauthorizedException("You can only change your own password.");
     }
-    return this.usersService.changePassword(id, changePasswordDto);
+    return this.usersService.changePassword(email, changePasswordDto);
   }
 
-  @Delete(':id')
-  @ApiOperation({ summary: 'Delete user' })
-  @ApiResponse({ status: 200, description: 'User deleted successfully' })
-  @ApiResponse({ status: 404, description: 'User not found' })
-  remove(@Param('id') id: string) {
-    return this.usersService.remove(id);
+  @Delete(":email")
+  @ApiOperation({ summary: "Delete user by email" })
+  @ApiResponse({ status: 200, description: "User deleted successfully" })
+  @ApiResponse({ status: 404, description: "User not found" })
+  remove(@Param("email") email: string) {
+    return this.usersService.removeByEmail(email);
   }
 }

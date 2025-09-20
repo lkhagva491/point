@@ -5,6 +5,7 @@ import Link from 'next/link'
 import axios from 'axios'
 import Cookies from 'js-cookie'
 import { toast } from 'react-toastify'
+import { Button } from '@point/ui'
 
 export default function Register() {
   const router = useRouter()
@@ -12,6 +13,7 @@ export default function Register() {
     username: '',
     email: '',
     password: '',
+    confirmPassword: '',
   })
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
@@ -21,16 +23,24 @@ export default function Register() {
     setLoading(true)
     setError('')
 
+    if (formData.password !== formData.confirmPassword) {
+      setError('Passwords do not match')
+      setLoading(false)
+      return
+    }
+
     try {
       const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/auth/register`, {
-        ...formData,
+        username: formData.username,
+        email: formData.email,
+        password: formData.password,
         userType: 'admin',
       }, { withCredentials: true })
       
       const { access_token, user } = response.data
       
-      Cookies.set('token', access_token, { expires: 7 })
-      Cookies.set('user', JSON.stringify(user), { expires: 7 })
+      Cookies.set('admin_token', access_token, { expires: 7 })
+      Cookies.set('admin_data', JSON.stringify(user), { expires: 7 })
       
       router.push('/dashboard')
 
@@ -48,8 +58,8 @@ export default function Register() {
         <title>Admin Registration - Point</title>
       </Head>
       
-      <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-md w-full space-y-8">
+      <div className="bg-gradient-to-br from-gray-100 to-gray-200 min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-md w-full space-y-8 bg-white p-8 rounded-xl shadow-lg">
           <div>
             <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
               Admin Registration
@@ -76,7 +86,7 @@ export default function Register() {
                   name="username"
                   type="text"
                   required
-                  className="input mt-1"
+                  className="input mt-1 focus:ring-indigo-500 focus:border-indigo-500"
                   placeholder="adminuser"
                   value={formData.username}
                   onChange={(e) => setFormData({ ...formData, username: e.target.value })}
@@ -92,7 +102,7 @@ export default function Register() {
                   name="email"
                   type="email"
                   required
-                  className="input mt-1"
+                  className="input mt-1 focus:ring-indigo-500 focus:border-indigo-500"
                   placeholder="admin@example.com"
                   value={formData.email}
                   onChange={(e) => setFormData({ ...formData, email: e.target.value })}
@@ -108,22 +118,39 @@ export default function Register() {
                   name="password"
                   type="password"
                   required
-                  className="input mt-1"
+                  className="input mt-1 focus:ring-indigo-500 focus:border-indigo-500"
                   placeholder="Password"
                   value={formData.password}
                   onChange={(e) => setFormData({ ...formData, password: e.target.value })}
                 />
               </div>
+              
+              <div>
+                <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700">
+                  Confirm Password
+                </label>
+                <input
+                  id="confirmPassword"
+                  name="confirmPassword"
+                  type="password"
+                  required
+                  className="input mt-1 focus:ring-indigo-500 focus:border-indigo-500"
+                  placeholder="Confirm your password"
+                  value={formData.confirmPassword}
+                  onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
+                />
+              </div>
             </div>
 
             <div>
-              <button
+              <Button
                 type="submit"
-                disabled={loading}
-                className="btn btn-primary w-full"
+                loading={loading}
+                className="w-full"
+                variant="primary"
               >
-                {loading ? 'Creating account...' : 'Create account'}
-              </button>
+                Create account
+              </Button>
             </div>
           </form>
 

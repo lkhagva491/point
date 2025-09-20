@@ -21,21 +21,42 @@ export default function Dashboard() {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    const token = Cookies.get('token')
-    const userData = Cookies.get('user')
-    
-    if (!token || !userData) {
-      router.push('/login')
-      return
-    }
+    const fetchUserData = async () => {
+      const token = Cookies.get('user_token');
+      const userDataCookie = Cookies.get('user_data');
 
-    setUser(JSON.parse(userData))
-    setLoading(false)
-  }, [router])
+      if (!token || !userDataCookie) {
+        router.push('/login');
+        return;
+      }
+
+      try {
+        // Fetch latest user data from backend
+        const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/auth/profile`, {}, {
+          headers: { Authorization: `Bearer ${token}` },
+          withCredentials: true,
+        });
+        const latestUser = response.data;
+        
+        setUser(latestUser);
+        Cookies.set('user_data', JSON.stringify(latestUser), { expires: 7 });
+      } catch (error) {
+        console.error("Failed to fetch latest user data:", error);
+        // Optionally handle error, e.g., redirect to login if token is invalid
+        Cookies.remove('user_token');
+        Cookies.remove('user_data');
+        router.push('/login?message=Session expired. Please log in again.');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchUserData();
+  }, [router]);
 
   const handleLogout = () => {
-    Cookies.remove('token')
-    Cookies.remove('user')
+    Cookies.remove('user_token')
+    Cookies.remove('user_data')
     router.push('/')
   }
 
@@ -76,51 +97,51 @@ export default function Dashboard() {
         <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
           <div className="px-4 py-6 sm:px-0">
             <div className="card">
-              <h2 className="text-2xl font-bold text-gray-900 mb-6">Welcome to your Dashboard</h2>
+              <h2 className="text-2xl font-bold text-gray-900 mb-6">Dashboard</h2>
               
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 <div className="bg-primary-50 p-6 rounded-lg">
                   <h3 className="text-lg font-semibold text-primary-900 mb-2">Profile</h3>
-                  <p className="text-primary-700 mb-4">Manage your account settings and personal information.</p>
+                  <p className="text-primary-700 mb-4">Manage account settings.</p>
                   <Link href="/change-password" className="btn btn-primary">Change Password</Link>
                 </div>
                 
                 <div className="bg-green-50 p-6 rounded-lg">
-                  <h3 className="text-lg font-semibold text-green-900 mb-2">Activity</h3>
-                  <p className="text-green-700 mb-4">Track your recent activity and usage statistics.</p>
-                  <button className="btn bg-green-600 text-white hover:bg-green-700">View Activity</button>
+                  <h3 className="text-lg font-semibold text-green-900 mb-2">Deposit Points</h3>
+                  <p className="text-green-700 mb-4">Request to deposit points into your account.</p>
+                  <Link href="/deposit" className="btn bg-green-600 text-white hover:bg-green-700">Deposit</Link>
                 </div>
                 
                 <div className="bg-purple-50 p-6 rounded-lg">
-                  <h3 className="text-lg font-semibold text-purple-900 mb-2">Settings</h3>
-                  <p className="text-purple-700 mb-4">Customize your preferences and application settings.</p>
-                  <button className="btn bg-purple-600 text-white hover:bg-purple-700">View Settings</button>
+                  <h3 className="text-lg font-semibold text-purple-900 mb-2">Transaction History</h3>
+                  <p className="text-purple-700 mb-4">View your past point transactions.</p>
+                  <Link href="/transaction-history" className="btn bg-purple-600 text-white hover:bg-purple-700">View History</Link>
                 </div>
               </div>
               
               <div className="mt-8">
                 <h3 className="text-lg font-semibold text-gray-900 mb-4">Account Information</h3>
-                <div className="bg-gray-50 p-4 rounded-lg">
+                <div className="bg-gray-50 p-4 rounded-lg border border-gray-200 shadow-sm">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                      <span className="text-sm font-medium text-gray-500">Username:</span>
-                      <p className="text-gray-900">{user?.username}</p>
+                    <div className="pb-2 border-b border-gray-200">
+                      <span className="text-sm font-semibold text-gray-600">Username:</span>
+                      <p className="text-gray-900 text-base">{user?.username}</p>
                     </div>
-                    <div>
-                      <span className="text-sm font-medium text-gray-500">Email:</span>
-                      <p className="text-gray-900">{user?.email}</p>
+                    <div className="pb-2 border-b border-gray-200">
+                      <span className="text-sm font-semibold text-gray-600">Email:</span>
+                      <p className="text-gray-900 text-base">{user?.email}</p>
                     </div>
-                    <div>
-                      <span className="text-sm font-medium text-gray-500">Role:</span>
-                      <p className="text-gray-900 capitalize">{user?.role}</p>
+                    <div className="pb-2 border-b border-gray-200">
+                      <span className="text-sm font-semibold text-gray-600">Role:</span>
+                      <p className="text-gray-900 text-base capitalize">{user?.role}</p>
                     </div>
-                    <div>
-                      <span className="text-sm font-medium text-gray-500">Points:</span>
-                      <p className="text-gray-900">{user?.point || 0}</p>
+                    <div className="pb-2 border-b border-gray-200">
+                      <span className="text-sm font-semibold text-gray-600">Points:</span>
+                      <p className="text-gray-900 text-base">{user?.point || 0}</p>
                     </div>
-                    <div>
-                      <span className="text-sm font-medium text-gray-500">Member Since:</span>
-                      <p className="text-gray-900">Today</p>
+                    <div className="pb-2 border-b border-gray-200">
+                      <span className="text-sm font-semibold text-gray-600">Member Since:</span>
+                      <p className="text-gray-900 text-base">Today</p>
                     </div>
                   </div>
                 </div>

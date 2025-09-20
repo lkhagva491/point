@@ -1,13 +1,10 @@
 import Head from 'next/head'
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/router'
-import axios from 'axios'
 import Cookies from 'js-cookie'
-import EditUserModal from '../components/EditUserModal'
-import { toast } from 'react-toastify'
+import Link from 'next/link'
 
 interface User {
-  _id: string
   email: string
   username: string
   userType: string
@@ -19,13 +16,11 @@ interface User {
 export default function Dashboard() {
   const router = useRouter()
   const [user, setUser] = useState<User | null>(null)
-  const [users, setUsers] = useState<User[]>([])
   const [loading, setLoading] = useState(true)
-  const [editingUser, setEditingUser] = useState<User | null>(null)
 
   useEffect(() => {
-    const token = Cookies.get('token')
-    const userData = Cookies.get('user')
+    const token = Cookies.get('admin_token')
+    const userData = Cookies.get('admin_data')
     
     if (!token || !userData) {
       router.push('/')
@@ -33,68 +28,16 @@ export default function Dashboard() {
     }
 
     setUser(JSON.parse(userData))
-    fetchUsers()
+    setLoading(false)
   }, [router])
 
-  const fetchUsers = async () => {
-    setLoading(true)
-    try {
-      const token = Cookies.get('token')
-      const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/users`, {
-        headers: { Authorization: `Bearer ${token}` },
-        withCredentials: true,
-      })
-      setUsers(response.data)
-    } catch (error: any) {
-      if (error.response?.status === 401) {
-        Cookies.remove('token')
-        Cookies.remove('user')
-        router.push('/?message=Session expired. Please log in again.')
-      } else {
-        console.error('Failed to fetch users:', error)
-      }
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  const handleEdit = (userToEdit: User) => {
-    setEditingUser(userToEdit)
-  }
-
-  const handleDelete = async (userId: string) => {
-    if (window.confirm('Are you sure you want to delete this user?')) {
-      try {
-        const token = Cookies.get('token')
-        await axios.delete(`${process.env.NEXT_PUBLIC_API_URL}/users/${userId}`, {
-          headers: { Authorization: `Bearer ${token}` },
-          withCredentials: true,
-        })
-        fetchUsers() // Refresh the user list
-      } catch (error: any) {
-        if (error.response?.status === 401) {
-          Cookies.remove('token')
-          Cookies.remove('user')
-          router.push('/?message=Session expired. Please log in again.')
-        } else {
-          console.error('Failed to delete user:', error)
-          alert('Failed to delete user')
-        }
-      }
-    }
-  }
-
   const handleLogout = () => {
-    Cookies.remove('token')
-    Cookies.remove('user')
+    Cookies.remove('admin_token')
+    Cookies.remove('admin_data')
     router.push('/')
   }
 
-  const handleCloseModal = () => {
-    setEditingUser(null)
-  }
-
-  if (loading && !editingUser) {
+  if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-lg">Loading...</div>
@@ -131,75 +74,29 @@ export default function Dashboard() {
         <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
           <div className="px-4 py-6 sm:px-0">
             <div className="card">
-              <h2 className="text-2xl font-bold text-gray-900 mb-6">Users Management</h2>
+              <h2 className="text-2xl font-bold text-gray-900 mb-6">Admin Dashboard</h2>
               
-              <div className="overflow-x-auto">
-                <table className="min-w-full divide-y divide-gray-200">
-                  <thead className="bg-gray-50">
-                    <tr>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Name
-                      </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Email
-                      </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Role
-                      </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Actions
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody className="bg-white divide-y divide-gray-200">
-                    {users.map((user) => (
-                      <tr key={user._id}>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                          {user.username}
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                          {user.email}
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                          <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
-                            user.role === 'admin' 
-                              ? 'bg-red-100 text-red-800' 
-                              : 'bg-green-100 text-green-800'
-                          }`}>
-                            {user.role}
-                          </span>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                          <button
-                            onClick={() => handleEdit(user)}
-                            className="text-primary-600 hover:text-primary-900 mr-3"
-                          >
-                            Edit
-                          </button>
-                          <button
-                            onClick={() => handleDelete(user._id)}
-                            className="text-red-600 hover:text-red-900"
-                          >
-                            Delete
-                          </button>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+                <div className="bg-purple-50 p-6 rounded-lg">
+                  <h3 className="text-lg font-semibold text-purple-900 mb-2">Admin Management</h3>
+                  <p className="text-purple-700 mb-4">Manage admin accounts, edit details, or delete admins.</p>
+                  <Link href="/admin-management" className="btn bg-purple-600 text-white hover:bg-purple-700">View Admins</Link>
+                </div>
+                <div className="bg-blue-50 p-6 rounded-lg">
+                  <h3 className="text-lg font-semibold text-blue-900 mb-2">Users Management</h3>
+                  <p className="text-blue-700 mb-4">Manage user accounts, edit details, or delete users.</p>
+                  <Link href="/users-management" className="btn bg-blue-600 text-white hover:bg-blue-700">View Users</Link>
+                </div>
+                <div className="bg-green-50 p-6 rounded-lg">
+                  <h3 className="text-lg font-semibold text-green-900 mb-2">Deposit Requests</h3>
+                  <p className="text-green-700 mb-4">Review and manage pending user deposit requests.</p>
+                  <Link href="/deposit-requests" className="btn bg-green-600 text-white hover:bg-green-700">View Requests</Link>
+                </div>
               </div>
             </div>
           </div>
         </main>
       </div>
-
-      {editingUser && (
-        <EditUserModal
-          user={editingUser}
-          onClose={handleCloseModal}
-          onUserUpdated={fetchUsers}
-        />
-      )}
     </>
   )
 }

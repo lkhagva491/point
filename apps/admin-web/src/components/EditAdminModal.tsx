@@ -5,30 +5,31 @@ import Cookies from 'js-cookie';
 import { useRouter } from 'next/router';
 import { toast } from 'react-toastify';
 
-interface User {
+interface Admin {
   email: string;
   username: string;
+  role: string;
 }
 
-interface EditUserModalProps {
-  user: User | null;
+interface EditAdminModalProps {
+  admin: Admin | null;
   onClose: () => void;
-  onUserUpdated: () => void;
+  onAdminUpdated: () => void;
 }
 
-export default function EditUserModal({ user, onClose, onUserUpdated }: EditUserModalProps) {
+export default function EditAdminModal({ admin, onClose, onAdminUpdated }: EditAdminModalProps) {
   const router = useRouter();
   const [formData, setFormData] = useState({ username: '', email: '' });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
   useEffect(() => {
-    if (user) {
-      setFormData({ username: user.username, email: user.email });
+    if (admin) {
+      setFormData({ username: admin.username, email: admin.email });
     }
-  }, [user]);
+  }, [admin]);
 
-  if (!user) return null;
+  if (!admin) return null;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -37,12 +38,12 @@ export default function EditUserModal({ user, onClose, onUserUpdated }: EditUser
 
     try {
       const token = Cookies.get('admin_token');
-      await axios.patch(`${process.env.NEXT_PUBLIC_API_URL}/users/${user.email}`, formData, {
+      await axios.patch(`${process.env.NEXT_PUBLIC_API_URL}/admins/${admin.email}`, formData, {
         headers: { Authorization: `Bearer ${token}` },
         withCredentials: true,
       });
-      toast.success('User updated successfully!');
-      onUserUpdated();
+      toast.success('Admin updated successfully!');
+      onAdminUpdated();
       onClose();
     } catch (err: any) {
       if (err.response?.status === 401) {
@@ -50,7 +51,7 @@ export default function EditUserModal({ user, onClose, onUserUpdated }: EditUser
         Cookies.remove('admin_data');
         router.push('/?message=Session expired. Please log in again.');
       } else {
-        setError(err.response?.data?.message || 'Failed to update user');
+        setError(err.response?.data?.message || 'Failed to update admin');
       }
     } finally {
       setLoading(false);
@@ -60,7 +61,7 @@ export default function EditUserModal({ user, onClose, onUserUpdated }: EditUser
   return (
     <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full flex items-center justify-center">
       <div className="relative mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
-        <h3 className="text-lg font-medium leading-6 text-gray-900 mb-4">Edit User</h3>
+        <h3 className="text-lg font-medium leading-6 text-gray-900 mb-4">Edit Admin</h3>
         <form onSubmit={handleSubmit}>
           {error && <div className="text-red-500 mb-4">{error}</div>}
           <div className="space-y-4">

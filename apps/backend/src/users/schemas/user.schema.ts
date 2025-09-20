@@ -1,5 +1,5 @@
-import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document, Types } from 'mongoose';
+import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
+import { Document, Types } from "mongoose";
 
 export type UserDocument = User & Document;
 
@@ -16,7 +16,7 @@ export class User {
   @Prop({ required: true })
   password: string;
 
-  @Prop({ default: 'user' }) // Add role property with default 'user'
+  @Prop({ default: "user" }) // Add role property with default 'user'
   role: string;
 
   @Prop({ default: true })

@@ -25,8 +25,8 @@ export default function Login() {
       const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/auth/login`, { ...formData, userType: 'admin' }, { withCredentials: true })
       const { access_token, user } = response.data
       
-      Cookies.set('token', access_token, { expires: 7 })
-      Cookies.set('user', JSON.stringify(user), { expires: 7 })
+      Cookies.set('admin_token', access_token, { expires: 7 })
+      Cookies.set('admin_data', JSON.stringify(user), { expires: 7 })
       
       toast.success('Login successful!');
       router.push('/dashboard')
@@ -43,8 +43,8 @@ export default function Login() {
         <title>Admin Login - Point</title>
       </Head>
       
-      <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-md w-full space-y-8">
+      <div className="bg-gradient-to-br from-gray-100 to-gray-200 min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-md w-full space-y-8 bg-white p-8 rounded-xl shadow-lg">
           <div>
             <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
               Admin Login
@@ -71,7 +71,7 @@ export default function Login() {
                   name="email"
                   type="email"
                   required
-                  className="input mt-1"
+                  className="input mt-1 focus:ring-indigo-500 focus:border-indigo-500"
                   placeholder="admin@example.com"
                   value={formData.email}
                   onChange={(e) => setFormData({ ...formData, email: e.target.value })}
@@ -87,7 +87,7 @@ export default function Login() {
                   name="password"
                   type="password"
                   required
-                  className="input mt-1"
+                  className="input mt-1 focus:ring-indigo-500 focus:border-indigo-500"
                   placeholder="Password"
                   value={formData.password}
                   onChange={(e) => setFormData({ ...formData, password: e.target.value })}
