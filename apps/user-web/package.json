@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev -p 3003",
-    "build": "next build",
+    "build": "npm run build -w @point/ui && next build",
     "start": "next start -p 3003",
     "lint": "next lint",
     "clean": "rimraf .next"
