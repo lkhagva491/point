@@ -15,24 +15,38 @@ function Dashboard() {
   const [user, setUser] = useState<User | null>(null);
   const { post, loading } = useApi();
 
-  useEffect(() => {
-    const fetchUserData = async () => {
-      const response = await post(
-        `${process.env.NEXT_PUBLIC_API_URL}/auth/profile`,
-        {}
-      );
-      if (response) {
-        setUser(response);
-        Cookies.set("user_data", JSON.stringify(response), { expires: 7 });
-      }
-    };
+  const fetchUserData = async () => {
+    const response = await post(
+      `${process.env.NEXT_PUBLIC_API_URL}/auth/profile`,
+      {}
+    );
+    if (response) {
+      setUser(response);
+      Cookies.set("user_data", JSON.stringify(response), { expires: 7 });
+      return response;
+    }
+    return null;
+  };
 
+  useEffect(() => {
     const userData = Cookies.get("user_data");
     if (userData) {
       setUser(JSON.parse(userData));
     } else {
       fetchUserData();
     }
+
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible') {
+        fetchUserData();
+      }
+    };
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+    };
   }, []);
 
   const handleLogout = () => {
