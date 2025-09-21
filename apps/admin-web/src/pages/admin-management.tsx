@@ -10,19 +10,26 @@ import withAuth from "../hooks/withAuth";
 import useApi from "../hooks/useApi";
 import AdminList from "../components/AdminList";
 import Header from "../components/Header";
-import { Card, LoadingSpinner } from "@point/ui";
+import { Card, LoadingSpinner, Pagination } from "@point/ui";
+
+const ADMINS_PER_PAGE = 10;
 
 function AdminManagement() {
   const router = useRouter();
   const [user, setUser] = useState<User | null>(null);
   const [admins, setAdmins] = useState<Admin[]>([]);
   const [editingAdmin, setEditingAdmin] = useState<Admin | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalCount, setTotalCount] = useState(0);
   const { get, del, loading } = useApi();
 
-  const fetchAdmins = async () => {
-    const data = await get(`${process.env.NEXT_PUBLIC_API_URL}/admins`);
-    if (data) {
-      setAdmins(data);
+  const fetchAdmins = async (page: number, limit: number) => {
+    const data = await get(
+      `${process.env.NEXT_PUBLIC_API_URL}/admins?page=${page}&limit=${limit}`
+    );
+    if (data && data.admins && data.totalCount !== undefined) {
+      setAdmins(data.admins);
+      setTotalCount(data.totalCount);
     }
   };
 
@@ -31,8 +38,8 @@ function AdminManagement() {
     if (adminData) {
       setUser(JSON.parse(adminData));
     }
-    fetchAdmins();
-  }, []);
+    fetchAdmins(currentPage, ADMINS_PER_PAGE);
+  }, [currentPage]);
 
   const handleEditAdmin = (adminToEdit: Admin) => {
     setEditingAdmin(adminToEdit);
@@ -45,7 +52,7 @@ function AdminManagement() {
       );
       if (response) {
         toast.success("Admin deleted successfully!");
-        fetchAdmins(); // Refresh the admin list
+        fetchAdmins(currentPage, ADMINS_PER_PAGE); // Refresh the admin list
       }
     }
   };
@@ -58,6 +65,12 @@ function AdminManagement() {
     Cookies.remove("admin_token");
     Cookies.remove("admin_data");
     router.push("/");
+  };
+
+  const totalPages = Math.ceil(totalCount / ADMINS_PER_PAGE);
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
   };
 
   if (loading && !editingAdmin) {
@@ -94,6 +107,14 @@ function AdminManagement() {
                 onEdit={handleEditAdmin}
                 onDelete={handleDeleteAdmin}
               />
+
+              {totalPages > 1 && (
+                <Pagination
+                  currentPage={currentPage}
+                  totalPages={totalPages}
+                  onPageChange={handlePageChange}
+                />
+              )}
             </Card>
           </div>
         </main>
@@ -103,7 +124,7 @@ function AdminManagement() {
         <EditAdminModal
           admin={editingAdmin}
           onClose={handleCloseModal}
-          onAdminUpdated={fetchAdmins}
+          onAdminUpdated={() => fetchAdmins(currentPage, ADMINS_PER_PAGE)}
         />
       )}
     </>

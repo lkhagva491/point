@@ -10,19 +10,26 @@ import withAuth from "../hooks/withAuth";
 import useApi from "../hooks/useApi";
 import UserList from "../components/UserList";
 import Header from "../components/Header";
-import { Card, LoadingSpinner } from "@point/ui";
+import { Card, LoadingSpinner, Pagination } from "@point/ui";
+
+const USERS_PER_PAGE = 10;
 
 function UsersManagement() {
   const router = useRouter();
   const [user, setUser] = useState<User | null>(null);
   const [users, setUsers] = useState<User[]>([]);
   const [editingUser, setEditingUser] = useState<User | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalCount, setTotalCount] = useState(0);
   const { get, del, loading } = useApi();
 
-  const fetchUsers = async () => {
-    const data = await get(`${process.env.NEXT_PUBLIC_API_URL}/users`);
-    if (data) {
-      setUsers(data);
+  const fetchUsers = async (page: number, limit: number) => {
+    const data = await get(
+      `${process.env.NEXT_PUBLIC_API_URL}/users?page=${page}&limit=${limit}`
+    );
+    if (data && data.users && data.totalCount !== undefined) {
+      setUsers(data.users);
+      setTotalCount(data.totalCount);
     }
   };
 
@@ -31,8 +38,8 @@ function UsersManagement() {
     if (adminData) {
       setUser(JSON.parse(adminData));
     }
-    fetchUsers();
-  }, []);
+    fetchUsers(currentPage, USERS_PER_PAGE);
+  }, [currentPage]);
 
   const handleEdit = (userToEdit: User) => {
     setEditingUser(userToEdit);
@@ -45,7 +52,7 @@ function UsersManagement() {
       );
       if (response) {
         toast.success("User deleted successfully!");
-        fetchUsers(); // Refresh the user list
+        fetchUsers(currentPage, USERS_PER_PAGE); // Refresh the user list
       }
     }
   };
@@ -58,6 +65,12 @@ function UsersManagement() {
     Cookies.remove("admin_token");
     Cookies.remove("admin_data");
     router.push("/");
+  };
+
+  const totalPages = Math.ceil(totalCount / USERS_PER_PAGE);
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
   };
 
   if (loading && !editingUser) {
@@ -94,6 +107,14 @@ function UsersManagement() {
                 onEdit={handleEdit}
                 onDelete={handleDelete}
               />
+
+              {totalPages > 1 && (
+                <Pagination
+                  currentPage={currentPage}
+                  totalPages={totalPages}
+                  onPageChange={handlePageChange}
+                />
+              )}
             </Card>
           </div>
         </main>
@@ -103,7 +124,7 @@ function UsersManagement() {
         <EditUserModal
           user={editingUser}
           onClose={handleCloseModal}
-          onUserUpdated={fetchUsers}
+          onUserUpdated={() => fetchUsers(currentPage, USERS_PER_PAGE)}
         />
       )}
     </>

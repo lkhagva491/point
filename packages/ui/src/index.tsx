@@ -116,3 +116,4 @@ export const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({
     </div>
   );
 };
+export { default as Pagination } from './Pagination';

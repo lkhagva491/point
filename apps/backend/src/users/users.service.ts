@@ -20,8 +20,24 @@ export class UsersService {
     return createdUser.save();
   }
 
-  async findAll(): Promise<User[]> {
-    return this.userModel.find().select("-password").exec();
+  async findAll(
+    page: number = 1,
+    limit: number = 10,
+  ): Promise<{ users: User[]; totalCount: number }> {
+    const skip = (page - 1) * limit;
+    const users = await this.userModel
+      .find()
+      .skip(skip)
+      .limit(limit)
+      .select("-password")
+      .exec();
+
+    const totalCount = await this.userModel.countDocuments().exec();
+
+    return {
+      users,
+      totalCount,
+    };
   }
 
   async findById(id: string): Promise<User> {

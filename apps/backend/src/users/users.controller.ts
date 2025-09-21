@@ -9,6 +9,7 @@ import {
   UseGuards,
   Req,
   UnauthorizedException,
+  Query,
 } from "@nestjs/common";
 import {
   ApiTags,
@@ -36,11 +37,14 @@ export class UsersController {
     return this.usersService.create(createUserDto);
   }
 
-  @Get()
+    @Get()
   @ApiOperation({ summary: "Get all users" })
   @ApiResponse({ status: 200, description: "Users retrieved successfully" })
-  findAll() {
-    return this.usersService.findAll();
+  findAll(
+    @Query('page') page: number = 1,
+    @Query('limit') limit: number = 10,
+  ) {
+    return this.usersService.findAll(page, limit);
   }
 
   @Get(":email")

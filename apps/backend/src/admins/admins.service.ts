@@ -15,8 +15,24 @@ export class AdminsService {
     return createdAdmin.save();
   }
 
-  async findAll(): Promise<Admin[]> {
-    return this.adminModel.find().select("-password").exec();
+  async findAll(
+    page: number = 1,
+    limit: number = 10,
+  ): Promise<{ admins: Admin[]; totalCount: number }> {
+    const skip = (page - 1) * limit;
+    const admins = await this.adminModel
+      .find()
+      .skip(skip)
+      .limit(limit)
+      .select("-password")
+      .exec();
+
+    const totalCount = await this.adminModel.countDocuments().exec();
+
+    return {
+      admins,
+      totalCount,
+    };
   }
 
   async findById(id: string): Promise<Admin> {

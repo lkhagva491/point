@@ -7,6 +7,7 @@ import {
   Param,
   Delete,
   UseGuards,
+  Query,
 } from "@nestjs/common";
 import {
   ApiTags,
@@ -33,11 +34,14 @@ export class AdminsController {
     return this.adminsService.create(createAdminDto);
   }
 
-  @Get()
+    @Get()
   @ApiOperation({ summary: "Get all admins" })
   @ApiResponse({ status: 200, description: "Admins retrieved successfully" })
-  findAll() {
-    return this.adminsService.findAll();
+  findAll(
+    @Query('page') page: number = 1,
+    @Query('limit') limit: number = 10,
+  ) {
+    return this.adminsService.findAll(page, limit);
   }
 
   @Get(":email")

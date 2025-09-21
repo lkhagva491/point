@@ -7,6 +7,7 @@ import {
   UseGuards,
   Patch,
   Req,
+  Query,
 } from "@nestjs/common";
 import { TransactionsService } from "./transactions.service";
 import { CreateTransactionDto } from "./dto/create-transaction.dto";
@@ -44,15 +45,26 @@ export class TransactionsController {
     );
   }
 
-  @UseGuards(JwtAuthGuard)
+    @UseGuards(JwtAuthGuard)
   @Get()
-  findAll() {
-    return this.transactionsService.findAll();
+  findAll(
+    @Query('page') page: number = 1,
+    @Query('limit') limit: number = 10,
+    @Query('type') type?: string,
+    @Query('status') status?: string,
+  ) {
+    return this.transactionsService.findAll(page, limit, type, status);
   }
 
-  @UseGuards(JwtAuthGuard)
+    @UseGuards(JwtAuthGuard)
   @Get("user/:userEmail")
-  findByUserEmail(@Param("userEmail") userEmail: string) {
-    return this.transactionsService.findByUserEmail(userEmail);
+  findByUserEmail(
+    @Param("userEmail") userEmail: string,
+    @Query('page') page: number = 1,
+    @Query('limit') limit: number = 10,
+    @Query('type') type?: string,
+    @Query('status') status?: string,
+  ) {
+    return this.transactionsService.findByUserEmail(userEmail, page, limit, type, status);
   }
 }

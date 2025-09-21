@@ -102,22 +102,79 @@ export class TransactionsService {
     return transaction.save();
   }
 
-  async findAll(): Promise<any[]> {
+    async findAll(
+    page: number = 1,
+    limit: number = 10,
+    type?: string,
+    status?: string,
+  ): Promise<{ transactions: any[]; totalCount: number }> {
+    const query: any = {};
+    if (type) {
+      query.type = type;
+    }
+    if (status) {
+      query.status = status;
+    }
+
+    const skip = (page - 1) * limit;
     const transactions = await this.transactionModel
-      .find()
+      .find(query)
+      .skip(skip)
+      .limit(limit)
       .populate("userId")
       .exec();
-    return transactions.map((transaction) => ({
-      ...transaction.toObject(),
-      userEmail: transaction.userId ? (transaction.userId as any).email : null,
-    }));
+
+    const totalCount = await this.transactionModel.countDocuments(query).exec();
+
+    return {
+      transactions: transactions.map((transaction) => ({
+        ...transaction.toObject(),
+        userEmail: transaction.userId
+          ? (transaction.userId as any).email
+          : null,
+      })),
+      totalCount,
+    };
   }
 
-  async findByUserEmail(userEmail: string): Promise<Transaction[]> {
+  async findByUserEmail(
+    userEmail: string,
+    page: number = 1,
+    limit: number = 10,
+    type?: string,
+    status?: string,
+  ): Promise<{ transactions: any[]; totalCount: number }> {
     const user = await this.usersService.findByEmail(userEmail);
     if (!user) {
       throw new NotFoundException(`User with email ${userEmail} not found`);
     }
-    return this.transactionModel.find({ userId: user._id }).exec();
+
+    const query: any = { userId: user._id };
+    if (type) {
+      query.type = type;
+    }
+    if (status) {
+      query.status = status;
+    }
+
+    const skip = (page - 1) * limit;
+    const transactions = await this.transactionModel
+      .find(query)
+      .skip(skip)
+      .limit(limit)
+      .populate("userId")
+      .exec();
+
+    const totalCount = await this.transactionModel.countDocuments(query).exec();
+
+    return {
+      transactions: transactions.map((transaction) => ({
+        ...transaction.toObject(),
+        userEmail: transaction.userId
+          ? (transaction.userId as any).email
+          : null,
+      })),
+      totalCount,
+    };
   }
 }

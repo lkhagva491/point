@@ -9,25 +9,25 @@ import { Transaction, User } from "../types";
 import withAuth from "../hooks/withAuth";
 import Header from "../components/Header";
 import RequestList from "../components/RequestList";
-import { Card, LoadingSpinner } from "@point/ui";
+import { Card, LoadingSpinner, Pagination } from "@point/ui";
+
+const REQUESTS_PER_PAGE = 10;
 
 function DepositRequests() {
   const router = useRouter();
   const [user, setUser] = useState<User | null>(null);
   const [requests, setRequests] = useState<Transaction[]>([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalCount, setTotalCount] = useState(0);
   const { get, patch, loading, error } = useApi();
 
-  const fetchDepositRequests = async () => {
+  const fetchDepositRequests = async (page: number, limit: number) => {
     const response = await get(
-      `${process.env.NEXT_PUBLIC_API_URL}/transactions`
+      `${process.env.NEXT_PUBLIC_API_URL}/transactions?page=${page}&limit=${limit}&type=deposit&status=pending`
     );
-    if (response) {
-      setRequests(
-        response.filter(
-          (req: Transaction) =>
-            req.type === "deposit" && req.status === "pending"
-        )
-      );
+    if (response && response.transactions && response.totalCount !== undefined) {
+      setRequests(response.transactions);
+      setTotalCount(response.totalCount);
     }
   };
 
@@ -36,8 +36,8 @@ function DepositRequests() {
     if (userData) {
       setUser(JSON.parse(userData));
     }
-    fetchDepositRequests();
-  }, []);
+    fetchDepositRequests(currentPage, REQUESTS_PER_PAGE);
+  }, [currentPage]);
 
   const handleStatusUpdate = async (
     id: string,
@@ -56,7 +56,7 @@ function DepositRequests() {
 
     if (response) {
       toast.success(`Deposit request ${status} successfully!`);
-      fetchDepositRequests();
+      fetchDepositRequests(currentPage, REQUESTS_PER_PAGE);
     }
   };
 
@@ -64,6 +64,12 @@ function DepositRequests() {
     Cookies.remove("admin_token");
     Cookies.remove("admin_data");
     router.push("/");
+  };
+
+  const totalPages = Math.ceil(totalCount / REQUESTS_PER_PAGE);
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
   };
 
   if (loading) {
@@ -109,6 +115,14 @@ function DepositRequests() {
                   requests={requests}
                   onStatusUpdate={handleStatusUpdate}
                   loading={loading}
+                />
+              )}
+
+              {totalPages > 1 && (
+                <Pagination
+                  currentPage={currentPage}
+                  totalPages={totalPages}
+                  onPageChange={handlePageChange}
                 />
               )}
             </Card>

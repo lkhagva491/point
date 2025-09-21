@@ -8,12 +8,16 @@ import withAuth from "../hooks/withAuth";
 import useApi from "../hooks/useApi";
 import Header from "../components/Header";
 import TransactionList from "../components/TransactionList";
-import { Card, LoadingSpinner } from "@point/ui";
+import { Card, LoadingSpinner, Pagination } from "@point/ui";
+
+const TRANSACTIONS_PER_PAGE = 10;
 
 function TransactionHistory() {
   const router = useRouter();
   const [user, setUser] = useState<User | null>(null);
   const [transactions, setTransactions] = useState<Transaction[]>([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalCount, setTotalCount] = useState(0);
   const { get, loading, error } = useApi();
 
   useEffect(() => {
@@ -21,16 +25,21 @@ function TransactionHistory() {
     if (userData) {
       const parsedUser = JSON.parse(userData);
       setUser(parsedUser);
-      fetchTransactions(parsedUser.email);
+      fetchTransactions(parsedUser.email, currentPage, TRANSACTIONS_PER_PAGE);
     }
-  }, []);
+  }, [currentPage]);
 
-  const fetchTransactions = async (email: string) => {
+  const fetchTransactions = async (
+    email: string,
+    page: number,
+    limit: number,
+  ) => {
     const data = await get(
-      `${process.env.NEXT_PUBLIC_API_URL}/transactions/user/${email}`
+      `${process.env.NEXT_PUBLIC_API_URL}/transactions/user/${email}?page=${page}&limit=${limit}`,
     );
-    if (data) {
-      setTransactions(data);
+    if (data && data.transactions && data.totalCount !== undefined) {
+      setTransactions(data.transactions);
+      setTotalCount(data.totalCount);
     }
   };
 
@@ -38,6 +47,12 @@ function TransactionHistory() {
     Cookies.remove("user_token");
     Cookies.remove("user_data");
     router.push("/");
+  };
+
+  const totalPages = Math.ceil(totalCount / TRANSACTIONS_PER_PAGE);
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
   };
 
   if (loading) {
@@ -85,6 +100,14 @@ function TransactionHistory() {
                 <p className="text-gray-600">No transactions found.</p>
               ) : (
                 <TransactionList transactions={transactions} />
+              )}
+
+              {totalPages > 1 && (
+                <Pagination
+                  currentPage={currentPage}
+                  totalPages={totalPages}
+                  onPageChange={handlePageChange}
+                />
               )}
             </Card>
           </div>
