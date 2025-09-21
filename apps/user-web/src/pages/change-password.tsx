@@ -1,96 +1,59 @@
-import Head from 'next/head';
-import { useState, useEffect } from 'react';
-import { useRouter } from 'next/router';
-import axios from 'axios';
-import Cookies from 'js-cookie';
-import { toast } from 'react-toastify';
-import { Button } from '@point/ui';
-import Link from 'next/link';
+import Head from "next/head";
+import { useState, useEffect } from "react";
+import { useRouter } from "next/router";
+import Cookies from "js-cookie";
+import { toast } from "react-toastify";
+import Link from "next/link";
+import { User } from "../types";
+import withAuth from "../hooks/withAuth";
+import useApi from "../hooks/useApi";
+import Header from "../components/Header";
+import ChangePasswordForm from "../components/ChangePasswordForm";
+import { Card, LoadingSpinner } from "@point/ui";
 
-interface User {
-  email: string
-  username: string
-  userType: string
-  role: string
-  point?: number
-  permissions?: number
-}
-
-export default function ChangePassword() {
+function ChangePassword() {
   const router = useRouter();
-  const [user, setUser] = useState<User | null>(null)
-  const [formData, setFormData] = useState({
-    currentPassword: '',
-    newPassword: '',
-    confirmNewPassword: '',
-  });
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
+  const [user, setUser] = useState<User | null>(null);
+  const { patch, loading, error } = useApi();
 
   useEffect(() => {
-    const token = Cookies.get('user_token')
-    const userData = Cookies.get('user_data')
-    
-    if (!token || !userData) {
-      router.push('/')
-      return
+    const userData = Cookies.get("user_data");
+    if (userData) {
+      setUser(JSON.parse(userData));
     }
+  }, []);
 
-    setUser(JSON.parse(userData))
-  }, [router])
-
-  const handleSubmit = async (e: React.FormEvent) => {
-
-    e.preventDefault();
-    setLoading(true);
-    setError('');
-
+  const handleSubmit = async (formData: any) => {
     if (formData.newPassword !== formData.confirmNewPassword) {
-      setError('New password and confirm password do not match');
-      setLoading(false);
+      toast.error("New password and confirm password do not match");
       return;
     }
 
-    try {
-      const token = Cookies.get('user_token');
-      const currentUser = JSON.parse(Cookies.get('user_data') || '{}');
+    const currentUser = JSON.parse(Cookies.get("user_data") || "{}");
 
-      if (!currentUser || !currentUser.email) {
-        throw new Error('User not logged in');
-      }
+    const response = await patch(
+      `${process.env.NEXT_PUBLIC_API_URL}/users/${currentUser.email}/password`,
+      formData
+    );
 
-      await axios.patch(`${process.env.NEXT_PUBLIC_API_URL}/users/${currentUser.email}/password`, formData, {
-        headers: { Authorization: `Bearer ${token}` },
-        withCredentials: true,
-      });
-
-      toast.success('Password changed successfully!');
-      router.push('/dashboard');
-    } catch (err: any) {
-      if (err.response?.status === 401) {
-        Cookies.remove('user_token');
-        Cookies.remove('user_data');
-        router.push('/?message=Session expired. Please log in again.');
-      } else {
-        setError(err.response?.data?.message || 'Failed to change password');
-      }
-    } finally {
-      setLoading(false);
+    if (response) {
+      toast.success("Password changed successfully!");
+      router.push("/dashboard");
     }
   };
 
   const handleLogout = () => {
-    Cookies.remove('user_token')
-    Cookies.remove('user_data')
-    router.push('/')
-  }
+    Cookies.remove("user_token");
+    Cookies.remove("user_data");
+    router.push("/");
+  };
 
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <div className="text-lg">Loading...</div>
+        <LoadingSpinner color="border-purple-600" size="xl" />
       </div>
-    )
+    );
   }
 
   return (
@@ -100,105 +63,31 @@ export default function ChangePassword() {
       </Head>
 
       <div className="min-h-screen bg-gray-50">
-        {/* Header */}
-        <header className="bg-white shadow">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="flex justify-between items-center py-6">
-              <h1 className="text-3xl font-bold text-gray-900">Point</h1>
-              <div className="flex items-center space-x-4">
-                <span className="text-sm text-gray-700">Welcome, {user?.username}</span>
-                <button
-                  onClick={handleLogout}
-                  className="btn btn-secondary"
-                >
-                  Logout
-                </button>
-              </div>
-            </div>
-          </div>
-        </header>
+        <Header user={user} onLogout={handleLogout} />
 
-        {/* Main Content */}
         <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
           <div className="px-4 py-6 sm:px-0">
-            <div className="card">
+            <Card>
               <div className="flex justify-between items-center mb-6">
-                <h2 className="text-2xl font-bold text-gray-900">Change Password</h2>
-                <Link href="/dashboard" className="btn btn-secondary">Dashboard</Link>
+                <h2 className="text-2xl font-bold text-gray-900">
+                  Change Password
+                </h2>
+                <Link href="/dashboard" className="btn btn-secondary">
+                  Dashboard
+                </Link>
               </div>
 
-              <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
-                {error && (
-                  <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-md">
-                    {error}
-                  </div>
-                )}
-
-                <div className="space-y-4">
-                  <div>
-                    <label htmlFor="currentPassword" className="block text-sm font-medium text-gray-700">
-                      Current Password
-                    </label>
-                    <input
-                      id="currentPassword"
-                      name="currentPassword"
-                      type="password"
-                      required
-                      className="input mt-1"
-                      value={formData.currentPassword}
-                      onChange={(e) => setFormData({ ...formData, currentPassword: e.target.value })}
-                      autoComplete="off"
-                    />
-                  </div>
-
-                  <div>
-                    <label htmlFor="newPassword" className="block text-sm font-medium text-gray-700">
-                      New Password
-                    </label>
-                    <input
-                      id="newPassword"
-                      name="newPassword"
-                      type="password"
-                      required
-                      className="input mt-1"
-                      value={formData.newPassword}
-                      onChange={(e) => setFormData({ ...formData, newPassword: e.target.value })}
-                      autoComplete="off"
-                    />
-                  </div>
-
-                  <div>
-                    <label htmlFor="confirmNewPassword" className="block text-sm font-medium text-gray-700">
-                      Confirm New Password
-                    </label>
-                    <input
-                      id="confirmNewPassword"
-                      name="confirmNewPassword"
-                      type="password"
-                      required
-                      className="input mt-1"
-                      value={formData.confirmNewPassword}
-                      onChange={(e) => setFormData({ ...formData, confirmNewPassword: e.target.value })}
-                      autoComplete="off"
-                    />
-                  </div>
-                </div>
-
-                <div>
-                  <Button
-                    type="submit"
-                    loading={loading}
-                    className="w-full"
-                    variant="primary"
-                  >
-                    Change Password
-                  </Button>
-                </div>
-              </form>
-            </div>
+              <ChangePasswordForm
+                onSubmit={handleSubmit}
+                loading={loading}
+                error={error || ""}
+              />
+            </Card>
           </div>
         </main>
       </div>
     </>
   );
 }
+
+export default withAuth(ChangePassword);

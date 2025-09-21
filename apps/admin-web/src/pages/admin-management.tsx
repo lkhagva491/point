@@ -1,71 +1,38 @@
 import Head from "next/head";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
-import axios from "axios";
 import Cookies from "js-cookie";
 import EditAdminModal from "../components/EditAdminModal";
 import { toast } from "react-toastify";
 import Link from "next/link";
+import { Admin, User } from "../types";
+import withAuth from "../hooks/withAuth";
+import useApi from "../hooks/useApi";
+import AdminList from "../components/AdminList";
+import Header from "../components/Header";
+import { Card, LoadingSpinner } from "@point/ui";
 
-interface Admin {
-  email: string;
-  username: string;
-  role: string;
-}
-
-interface User {
-  email: string;
-  username: string;
-  userType: string;
-  role: string;
-  point?: number;
-  permissions?: number;
-}
-
-export default function AdminManagement() {
+function AdminManagement() {
   const router = useRouter();
   const [user, setUser] = useState<User | null>(null);
   const [admins, setAdmins] = useState<Admin[]>([]);
-  const [loading, setLoading] = useState(true);
   const [editingAdmin, setEditingAdmin] = useState<Admin | null>(null);
-
-  useEffect(() => {
-    const token = Cookies.get("admin_token");
-    const adminData = Cookies.get("admin_data");
-
-    if (!token || !adminData) {
-      router.push("/");
-      return;
-    }
-
-    setUser(JSON.parse(adminData));
-    fetchAdmins();
-  }, [router]);
+  const { get, del, loading } = useApi();
 
   const fetchAdmins = async () => {
-    setLoading(true);
-    try {
-      const token = Cookies.get("admin_token");
-      const response = await axios.get(
-        `${process.env.NEXT_PUBLIC_API_URL}/admins`,
-        {
-          headers: { Authorization: `Bearer ${token}` },
-          withCredentials: true,
-        }
-      );
-      setAdmins(response.data);
-    } catch (error: any) {
-      if (error.response?.status === 401) {
-        Cookies.remove("admin_token");
-        Cookies.remove("admin_data");
-        router.push("/?message=Session expired. Please log in again.");
-      } else {
-        console.error("Failed to fetch admins:", error);
-      }
-    } finally {
-      setLoading(false);
+    const data = await get(`${process.env.NEXT_PUBLIC_API_URL}/admins`);
+    if (data) {
+      setAdmins(data);
     }
   };
+
+  useEffect(() => {
+    const adminData = Cookies.get("admin_data");
+    if (adminData) {
+      setUser(JSON.parse(adminData));
+    }
+    fetchAdmins();
+  }, []);
 
   const handleEditAdmin = (adminToEdit: Admin) => {
     setEditingAdmin(adminToEdit);
@@ -73,26 +40,12 @@ export default function AdminManagement() {
 
   const handleDeleteAdmin = async (adminEmail: string) => {
     if (window.confirm("Are you sure you want to delete this admin?")) {
-      try {
-        const token = Cookies.get("admin_token");
-        await axios.delete(
-          `${process.env.NEXT_PUBLIC_API_URL}/admins/${adminEmail}`,
-          {
-            headers: { Authorization: `Bearer ${token}` },
-            withCredentials: true,
-          }
-        );
+      const response = await del(
+        `${process.env.NEXT_PUBLIC_API_URL}/admins/${adminEmail}`
+      );
+      if (response) {
         toast.success("Admin deleted successfully!");
         fetchAdmins(); // Refresh the admin list
-      } catch (error: any) {
-        if (error.response?.status === 401) {
-          Cookies.remove("admin_token");
-          Cookies.remove("admin_data");
-          router.push("/?message=Session expired. Please log in again.");
-        } else {
-          console.error("Failed to delete admin:", error);
-          alert("Failed to delete admin");
-        }
       }
     }
   };
@@ -109,8 +62,8 @@ export default function AdminManagement() {
 
   if (loading && !editingAdmin) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-lg">Loading...</div>
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <LoadingSpinner color="border-purple-600" size="xl" />
       </div>
     );
   }
@@ -122,27 +75,11 @@ export default function AdminManagement() {
       </Head>
 
       <div className="min-h-screen bg-gray-50">
-        {/* Header */}
-        <header className="bg-white shadow">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="flex justify-between items-center py-6">
-              <h1 className="text-3xl font-bold text-gray-900">Point Admin</h1>
-              <div className="flex items-center space-x-4">
-                <span className="text-sm text-gray-700">
-                  Welcome, {user?.username}
-                </span>
-                <button onClick={handleLogout} className="btn btn-secondary">
-                  Logout
-                </button>
-              </div>
-            </div>
-          </div>
-        </header>
+        <Header user={user} onLogout={handleLogout} />
 
-        {/* Main Content */}
         <main className="mx-auto py-6 px-4 sm:px-6 lg:px-8 sm:max-w-7xl">
           <div className="py-6 sm:px-0">
-            <div className="card w-full mx-auto">
+            <Card>
               <div className="flex justify-between items-center mb-6">
                 <h2 className="text-2xl font-bold text-gray-900">
                   Admin Management
@@ -152,66 +89,12 @@ export default function AdminManagement() {
                 </Link>
               </div>
 
-              <div className="w-full mx-auto">
-                <table className="min-w-full divide-y divide-gray-200 block sm:table">
-                  <thead className="bg-gray-50 hidden sm:table-header-group">
-                    <tr>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Name
-                      </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Email
-                      </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Actions
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody className="bg-white divide-y divide-gray-200 w-full flex flex-col items-center sm:table-row-group">
-                    {admins.map((admin, index) => (
-                      <tr
-                        key={admin.email}
-                        className={`block sm:table-row mb-4 sm:mb-0 p-4 sm:p-0 rounded-lg shadow sm:shadow-none w-full max-w-4xl mx-auto ${
-                          index % 2 === 0 ? "bg-white" : "bg-gray-50"
-                        }`}
-                      >
-                        <td
-                          data-label="Name:"
-                          className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 block sm:table-cell relative sm:before:content-none before:content-[attr(data-label)] before:font-bold before:block before:text-gray-700"
-                        >
-                          {admin.username}
-                        </td>
-                        <td
-                          data-label="Email:"
-                          className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 block sm:table-cell relative sm:before:content-none before:content-[attr(data-label)] before:font-bold before:block before:text-gray-700"
-                        >
-                          {admin.email}
-                        </td>
-                        <td
-                          data-label="Actions:"
-                          className="px-6 py-4 whitespace-nowrap text-sm font-medium block sm:table-cell relative sm:before:content-none before:content-[attr(data-label)] before:font-bold before:block before:text-gray-700"
-                        >
-                          <div className="flex flex-col space-y-2 sm:flex-row sm:space-x-2 sm:space-y-0 justify-center">
-                            <button
-                              onClick={() => handleEditAdmin(admin)}
-                              className="text-primary-600 hover:text-primary-900 mr-3"
-                            >
-                              Edit
-                            </button>
-                            <button
-                              onClick={() => handleDeleteAdmin(admin.email)}
-                              className="text-red-600 hover:text-red-900"
-                            >
-                              Delete
-                            </button>
-                          </div>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </div>
+              <AdminList
+                admins={admins}
+                onEdit={handleEditAdmin}
+                onDelete={handleDeleteAdmin}
+              />
+            </Card>
           </div>
         </main>
       </div>
@@ -226,3 +109,5 @@ export default function AdminManagement() {
     </>
   );
 }
+
+export default withAuth(AdminManagement);
