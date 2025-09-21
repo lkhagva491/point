@@ -4,12 +4,15 @@ interface UserItemProps {
   user: User;
   onEdit: (user: User) => void;
   onDelete: (email: string) => void;
+  index: number;
 }
 
-const UserItem = ({ user, onEdit, onDelete }: UserItemProps) => {
+const UserItem = ({ user, onEdit, onDelete, index }: UserItemProps) => {
+  const rowClass = index % 2 === 0 ? "bg-white" : "bg-gray-50";
+
   return (
     <tr
-      className={`block sm:table-row mb-4 sm:mb-0 p-4 sm:p-0 rounded-lg shadow sm:shadow-none w-full max-w-4xl mx-auto`}
+      className={`${rowClass} block sm:table-row mb-4 sm:mb-0 p-4 sm:p-0 rounded-lg shadow sm:shadow-none w-full max-w-4xl mx-auto`}
     >
       <td
         data-label="Name:"

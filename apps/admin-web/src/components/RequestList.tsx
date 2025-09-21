@@ -40,12 +40,13 @@ const RequestList = ({ requests, onStatusUpdate, loading }: RequestListProps) =>
           </tr>
         </thead>
         <tbody className="bg-white divide-y divide-gray-200 flex flex-col items-center sm:table-row-group">
-          {requests.map((request) => (
+          {requests.map((request, index) => (
             <RequestItem
               key={request._id}
               request={request}
               onStatusUpdate={onStatusUpdate}
               loading={loading}
+              index={index}
             />
           ))}
         </tbody>

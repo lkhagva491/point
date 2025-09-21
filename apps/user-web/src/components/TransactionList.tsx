@@ -44,8 +44,8 @@ const TransactionList = ({ transactions }: TransactionListProps) => {
           </tr>
         </thead>
         <tbody className="bg-white divide-y divide-gray-200">
-          {transactions.map((transaction) => (
-            <TransactionItem key={transaction._id} transaction={transaction} />
+          {transactions.map((transaction, index) => (
+            <TransactionItem key={transaction._id} transaction={transaction} index={index} />
           ))}
         </tbody>
       </table>

@@ -25,12 +25,13 @@ const AdminList = ({ admins, onEdit, onDelete }: AdminListProps) => {
           </tr>
         </thead>
         <tbody className="bg-white divide-y divide-gray-200 w-full flex flex-col items-center sm:table-row-group">
-          {admins.map((admin) => (
+          {admins.map((admin, index) => (
             <AdminItem
               key={admin.email}
               admin={admin}
               onEdit={onEdit}
               onDelete={onDelete}
+              index={index}
             />
           ))}
         </tbody>

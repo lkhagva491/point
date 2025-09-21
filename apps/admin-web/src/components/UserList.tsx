@@ -28,12 +28,13 @@ const UserList = ({ users, onEdit, onDelete }: UserListProps) => {
           </tr>
         </thead>
         <tbody className="bg-white divide-y divide-gray-200 w-full flex flex-col items-center sm:table-row-group">
-          {users.map((user) => (
+          {users.map((user, index) => (
             <UserItem
               key={user.email}
               user={user}
               onEdit={onEdit}
               onDelete={onDelete}
+              index={index}
             />
           ))}
         </tbody>

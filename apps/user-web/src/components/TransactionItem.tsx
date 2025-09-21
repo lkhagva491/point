@@ -2,9 +2,10 @@ import { Transaction } from "../types";
 
 interface TransactionItemProps {
   transaction: Transaction;
+  index: number;
 }
 
-const TransactionItem = ({ transaction }: TransactionItemProps) => {
+const TransactionItem = ({ transaction, index }: TransactionItemProps) => {
   const getStatusColorClass = (status?: string) => {
     switch (status) {
       case "approved":
@@ -18,8 +19,10 @@ const TransactionItem = ({ transaction }: TransactionItemProps) => {
     }
   };
 
+  const rowClass = index % 2 === 0 ? "bg-white" : "bg-gray-50";
+
   return (
-    <tr>
+    <tr className={rowClass}>
       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
         {new Date(transaction.createdAt).toLocaleString()}
       </td>

@@ -5,12 +5,15 @@ interface RequestItemProps {
   request: Transaction;
   onStatusUpdate: (id: string, status: "approved" | "declined") => void;
   loading: boolean;
+  index: number;
 }
 
-const RequestItem = ({ request, onStatusUpdate, loading }: RequestItemProps) => {
+const RequestItem = ({ request, onStatusUpdate, loading, index }: RequestItemProps) => {
+  const rowClass = index % 2 === 0 ? "bg-white" : "bg-gray-50";
+
   return (
     <tr
-      className={`block sm:table-row mb-4 sm:mb-0 p-4 sm:p-0 rounded-lg shadow sm:shadow-none w-full max-w-xl mx-auto`}
+      className={`${rowClass} block sm:table-row mb-4 sm:mb-0 p-4 sm:p-0 rounded-lg shadow sm:shadow-none w-full max-w-xl mx-auto`}
     >
       <td
         data-label="Date:"
