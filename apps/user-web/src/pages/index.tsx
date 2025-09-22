@@ -165,6 +165,14 @@ export default function Home() {
                     </p>
                   </div>
                 </div>
+                <div className="relative">
+                  <div className="card">
+                    <h3 className="text-lg leading-6 font-medium text-gray-900">{t('tech_i18n_figma_title')}</h3>
+                    <p className="mt-2 text-base text-gray-500">
+                      {t('tech_i18n_figma_description')}
+                    </p>
+                  </div>
+                </div>
               </div>
             </div>
           </div>

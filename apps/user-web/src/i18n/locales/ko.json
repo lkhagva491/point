@@ -73,7 +73,7 @@
   "technologies_description": "Point는 고성능, 보안 및 원활한 사용자 경험을 보장하기 위해 강력하고 확장 가능한 기술 스택을 사용하여 개발되었습니다.",
   "tech_frontend_title": "프론트엔드",
   "tech_frontend_description": "동적이고 반응이 빠른 사용자 인터페이스를 위한 Next.js, React, TypeScript, Tailwind CSS.",
-  "tech_backend_title": "백엔д",
+  "tech_backend_title": "백엔",
   "tech_backend_description": "강력하고 확장 가능한 API를 위한 NestJS, TypeScript.",
   "tech_database_title": "데이터베이스",
   "tech_database_description": "유연하고 효율적인 데이터 저장을 위한 MongoDB.",
@@ -92,5 +92,7 @@
   "password_placeholder": "비밀번호를 입력하세요",
   "confirm_password_label": "비밀번호 확인",
   "confirm_password_placeholder": "비밀번호를 확인하세요",
-  "create_account_button": "계정 만들기"
+  "create_account_button": "계정 만들기",
+  "tech_i18n_figma_title": "국제화 (i18n) 및 Figma 통합",
+  "tech_i18n_figma_description": "일관된 디자인을 위해 i18n을 사용하여 다국어 지원을 구현하고 모노레포 UI에서 Figma 토큰으로 디자인 구성 요소를 동기화했습니다."
 }

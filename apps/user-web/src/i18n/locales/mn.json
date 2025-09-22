@@ -92,5 +92,7 @@
   "password_placeholder": "Нууц үгээ оруулна уу",
   "confirm_password_label": "Нууц үг баталгаажуулах",
   "confirm_password_placeholder": "Нууц үгээ баталгаажуулна уу",
-  "create_account_button": "Бүртгэл үүсгэх"
+  "create_account_button": "Бүртгэл үүсгэх",
+  "tech_i18n_figma_title": "Олон улсын хэл (i18n) ба Figma интеграц",
+  "tech_i18n_figma_description": "Олон хэлний дэмжлэгийг i18n ашиглан хэрэгжүүлж, monorepo UI дээр Figma token-оор дизайны компонентуудыг синхрончилж, дизайны нэгдмэл байдлыг хангасан."
 }

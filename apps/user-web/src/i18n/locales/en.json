@@ -92,5 +92,7 @@
   "password_placeholder": "Enter your password",
   "confirm_password_label": "Confirm Password",
   "confirm_password_placeholder": "Confirm your password",
-  "create_account_button": "Create account"
+  "create_account_button": "Create account",
+  "tech_i18n_figma_title": "Internationalization (i18n) & Figma Integration",
+  "tech_i18n_figma_description": "Implemented multi-language support using i18n and synchronized design components with Figma tokens in the monorepo UI for consistent design."
 }
