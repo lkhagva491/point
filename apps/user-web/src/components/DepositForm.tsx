@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Button } from "@point/ui";
+import { useTranslation } from "react-i18next";
 
 interface DepositFormProps {
   onSubmit: (amount: number) => void;
@@ -8,6 +9,7 @@ interface DepositFormProps {
 }
 
 const DepositForm = ({ onSubmit, loading, error }: DepositFormProps) => {
+  const { t } = useTranslation();
   const [amount, setAmount] = useState<number | string>("");
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -31,7 +33,7 @@ const DepositForm = ({ onSubmit, loading, error }: DepositFormProps) => {
             htmlFor="amount"
             className="block text-sm font-medium text-gray-700"
           >
-            Amount to Deposit
+            {t('amount_to_deposit_label')}
           </label>
           <input
             id="amount"
@@ -53,7 +55,7 @@ const DepositForm = ({ onSubmit, loading, error }: DepositFormProps) => {
           className="w-full"
           variant="primary"
         >
-          Submit Deposit Request
+          {t('submit_deposit_request_button')}
         </Button>
       </div>
     </form>

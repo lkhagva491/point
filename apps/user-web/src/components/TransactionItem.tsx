@@ -1,4 +1,5 @@
 import { Transaction } from "../types";
+import { useTranslation } from "react-i18next";
 
 interface TransactionItemProps {
   transaction: Transaction;
@@ -6,6 +7,7 @@ interface TransactionItemProps {
 }
 
 const TransactionItem = ({ transaction, index }: TransactionItemProps) => {
+  const { t } = useTranslation();
   const getStatusColorClass = (status?: string) => {
     switch (status) {
       case "approved":
@@ -20,6 +22,20 @@ const TransactionItem = ({ transaction, index }: TransactionItemProps) => {
   };
 
   const rowClass = index % 2 === 0 ? "bg-white" : "bg-gray-50";
+
+  const getStatusTranslation = (status?: string) => {
+    if (!status) return t('not_applicable');
+    switch (status) {
+      case "approved":
+        return t('status_approved');
+      case "pending":
+        return t('status_pending');
+      case "declined":
+        return t('status_declined');
+      default:
+        return status;
+    }
+  }
 
   return (
     <tr className={rowClass}>
@@ -38,11 +54,11 @@ const TransactionItem = ({ transaction, index }: TransactionItemProps) => {
             getStatusColorClass(transaction.status)
           }`}
         >
-          {transaction.status || "N/A"}
+          {getStatusTranslation(transaction.status)}
         </span>
       </td>
       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 text-center">
-        {transaction.requestedAmount || "N/A"}
+        {transaction.requestedAmount || t('not_applicable')}
       </td>
     </tr>
   );

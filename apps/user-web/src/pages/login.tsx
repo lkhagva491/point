@@ -6,8 +6,10 @@ import axios from 'axios'
 import Cookies from 'js-cookie'
 import { toast } from 'react-toastify'
 import { Button } from '@point/ui'
+import { useTranslation } from 'react-i18next'
 
 export default function Login() {
+  const { t } = useTranslation()
   const router = useRouter()
   const [formData, setFormData] = useState({
     email: '',
@@ -27,7 +29,7 @@ export default function Login() {
       
       Cookies.set('user_token', access_token, { expires: 7 })
       Cookies.set('user_data', JSON.stringify(user), { expires: 7 })
-      axios.defaults.headers.common['Authorization'] = `Bearer ${access_token}`;
+      axios.defaults.headers.common['Authorization'] = `Bearer ${access_token}`
       
       toast.success('Login successful!');
       router.push('/dashboard')
@@ -41,14 +43,14 @@ export default function Login() {
   return (
     <>
       <Head>
-        <title>Login - Point</title>
+        <title>{t('login_header')} - Point</title>
       </Head>
       
       <div className="bg-gradient-to-br from-gray-100 to-gray-200 min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
         <div className="max-w-sm w-full space-y-8 bg-white p-8 rounded-xl shadow-lg">
           <div>
             <h2 className="mt-6 text-center text-3xl sm:text-4xl font-extrabold text-gray-900">
-              Sign in to your account
+              {t('login_header')}
             </h2>
             <p className="mt-2 text-center text-sm sm:text-base text-gray-600">
               Or{' '}
@@ -73,7 +75,7 @@ export default function Login() {
             <div className="space-y-4">
               <div>
                 <label htmlFor="email" className="block text-sm font-medium text-gray-700">
-                  Email address
+                  {t('email_label')}
                 </label>
                 <input
                   id="email"
@@ -89,7 +91,7 @@ export default function Login() {
               
               <div>
                 <label htmlFor="password" className="block text-sm font-medium text-gray-700">
-                  Password
+                  {t('password_label')}
                 </label>
                 <input
                   id="password"
@@ -112,7 +114,7 @@ export default function Login() {
                 className="w-full"
                 variant="primary"
               >
-                Sign in
+                {t('login_button')}
               </Button>
             </div>
           </form>

@@ -9,8 +9,10 @@ import Header from "../components/Header";
 import DashboardLinks from "../components/DashboardLinks";
 import AccountInfo from "../components/AccountInfo";
 import { Card, LoadingSpinner } from "@point/ui";
+import { useTranslation } from "react-i18next";
 
 function Dashboard() {
+  const { t } = useTranslation();
   const router = useRouter();
   const [user, setUser] = useState<User | null>(null);
   const { post, loading } = useApi();
@@ -66,7 +68,7 @@ function Dashboard() {
   return (
     <>
       <Head>
-        <title>Dashboard - Point</title>
+        <title>{t('dashboard_page_title')}</title>
       </Head>
 
       <div className="min-h-screen bg-gray-50">
@@ -76,7 +78,7 @@ function Dashboard() {
           <div className="px-4 py-6 sm:px-0">
             <Card>
               <h2 className="text-2xl font-bold text-gray-900 mb-6">
-                Dashboard
+                {t('dashboard_title')}
               </h2>
 
               <DashboardLinks />

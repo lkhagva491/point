@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Button } from "@point/ui";
+import { useTranslation } from "react-i18next";
 
 interface ChangePasswordFormProps {
   onSubmit: (data: any) => void;
@@ -8,6 +9,7 @@ interface ChangePasswordFormProps {
 }
 
 const ChangePasswordForm = ({ onSubmit, loading, error }: ChangePasswordFormProps) => {
+  const { t } = useTranslation();
   const [formData, setFormData] = useState({
     currentPassword: "",
     newPassword: "",
@@ -33,7 +35,7 @@ const ChangePasswordForm = ({ onSubmit, loading, error }: ChangePasswordFormProp
             htmlFor="currentPassword"
             className="block text-sm font-medium text-gray-700"
           >
-            Current Password
+            {t('current_password_label')}
           </label>
           <input
             id="currentPassword"
@@ -54,7 +56,7 @@ const ChangePasswordForm = ({ onSubmit, loading, error }: ChangePasswordFormProp
             htmlFor="newPassword"
             className="block text-sm font-medium text-gray-700"
           >
-            New Password
+            {t('new_password_label')}
           </label>
           <input
             id="newPassword"
@@ -75,7 +77,7 @@ const ChangePasswordForm = ({ onSubmit, loading, error }: ChangePasswordFormProp
             htmlFor="confirmNewPassword"
             className="block text-sm font-medium text-gray-700"
           >
-            Confirm New Password
+            {t('confirm_new_password_label')}
           </label>
           <input
             id="confirmNewPassword"
@@ -99,7 +101,7 @@ const ChangePasswordForm = ({ onSubmit, loading, error }: ChangePasswordFormProp
           className="w-full"
           variant="primary"
         >
-          Change Password
+          {t('change_password_button')}
         </Button>
       </div>
     </form>

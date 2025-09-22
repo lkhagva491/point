@@ -9,10 +9,12 @@ import useApi from "../hooks/useApi";
 import Header from "../components/Header";
 import TransactionList from "../components/TransactionList";
 import { Card, LoadingSpinner, Pagination } from "@point/ui";
+import { useTranslation } from "react-i18next";
 
 const TRANSACTIONS_PER_PAGE = 10;
 
 function TransactionHistory() {
+  const { t } = useTranslation();
   const router = useRouter();
   const [user, setUser] = useState<User | null>(null);
   const [transactions, setTransactions] = useState<Transaction[]>([]);
@@ -64,13 +66,13 @@ function TransactionHistory() {
   }
 
   if (error) {
-    return <div className="text-center mt-10 text-red-500">Error: {error}</div>;
+    return <div className="text-center mt-10 text-red-500">{t('error_message', { error })}</div>;
   }
 
   return (
     <>
       <Head>
-        <title>Transaction History - Point</title>
+        <title>{t('transaction_history_page_title')}</title>
       </Head>
 
       <div className="min-h-screen bg-gray-50">
@@ -81,23 +83,23 @@ function TransactionHistory() {
             <Card>
               <div className="flex justify-between items-center mb-6">
                 <h2 className="text-2xl font-bold text-gray-900">
-                  Transaction History
+                  {t('transaction_history_title')}
                 </h2>
                 <div className="flex space-x-2">
                   <Link href="/dashboard" className="btn btn-secondary">
-                    Dashboard
+                    {t('dashboard_button')}
                   </Link>
                   <Link
                     href="/deposit"
                     className="btn bg-green-600 text-white hover:bg-green-700"
                   >
-                    Deposit
+                    {t('deposit_link')}
                   </Link>
                 </div>
               </div>
 
               {transactions.length === 0 ? (
-                <p className="text-gray-600">No transactions found.</p>
+                <p className="text-gray-600">{t('no_transactions_found')}</p>
               ) : (
                 <TransactionList transactions={transactions} />
               )}

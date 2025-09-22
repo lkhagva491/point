@@ -10,8 +10,10 @@ import useApi from "../hooks/useApi";
 import Header from "../components/Header";
 import DepositForm from "../components/DepositForm";
 import { Card } from "@point/ui";
+import { useTranslation } from "react-i18next";
 
 function Deposit() {
+  const { t } = useTranslation();
   const router = useRouter();
   const [user, setUser] = useState<User | null>(null);
   const { post, loading, error } = useApi();
@@ -35,7 +37,7 @@ function Deposit() {
     );
 
     if (response) {
-      toast.success("Deposit request submitted successfully!");
+      toast.success(t('deposit_success_message'));
       router.push("/transaction-history");
     }
   };
@@ -49,7 +51,7 @@ function Deposit() {
   return (
     <>
       <Head>
-        <title>Deposit Points - Point</title>
+        <title>{t('deposit_page_title')}</title>
       </Head>
 
       <div className="min-h-screen bg-gray-50">
@@ -60,17 +62,17 @@ function Deposit() {
             <Card>
               <div className="flex justify-between items-center mb-6">
                 <h2 className="text-2xl font-bold text-gray-900">
-                  Deposit Points
+                  {t('deposit_title')}
                 </h2>
                 <div className="flex space-x-2">
                   <Link href="/dashboard" className="btn btn-secondary">
-                    Dashboard
+                    {t('dashboard_button')}
                   </Link>
                   <Link
                     href="/transaction-history"
                     className="btn bg-purple-600 text-white hover:bg-purple-700"
                   >
-                    View History
+                    {t('view_history_link')}
                   </Link>
                 </div>
               </div>

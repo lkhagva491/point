@@ -6,8 +6,10 @@ import axios from 'axios'
 import Cookies from 'js-cookie'
 import { toast } from 'react-toastify'
 import { Button } from '@point/ui'
+import { useTranslation } from 'react-i18next'
 
 export default function Register() {
+  const { t } = useTranslation();
   const router = useRouter()
   const [formData, setFormData] = useState({
     username: '',
@@ -24,7 +26,7 @@ export default function Register() {
     setError('')
 
     if (formData.password !== formData.confirmPassword) {
-      setError('Passwords do not match')
+      setError(t('passwords_do_not_match_error'))
       setLoading(false)
       return
     }
@@ -46,7 +48,7 @@ export default function Register() {
 
     } catch (err: any) {
       console.error('Frontend: Error during registration:', err);
-      setError(err.response?.data?.message || 'Registration failed');
+      setError(err.response?.data?.message || t('registration_failed_error'));
     } finally {
       setLoading(false);
     }
@@ -55,24 +57,24 @@ export default function Register() {
   return (
     <>
       <Head>
-        <title>Register - Point</title>
+        <title>{t('register_page_title')}</title>
       </Head>
       
       <div className="bg-gradient-to-br from-gray-100 to-gray-200 min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
         <div className="max-w-sm w-full space-y-8 bg-white p-8 rounded-xl shadow-lg">
           <div>
             <h2 className="mt-6 text-center text-3xl sm:text-4xl font-extrabold text-gray-900">
-              Create your account
+              {t('create_your_account_title')}
             </h2>
             <p className="mt-2 text-center text-sm sm:text-base text-gray-600">
               Or{' '}
               <Link href="/login" className="font-medium text-primary-600 hover:text-primary-500">
-                sign in to your existing account
+                {t('signin_existing_account_link')}
               </Link>
               {' '}
               or{' '}
               <Link href="/" className="font-medium text-primary-600 hover:text-primary-500">
-                go to Home
+                {t('go_to_home_link')}
               </Link>
             </p>
           </div>
@@ -87,7 +89,7 @@ export default function Register() {
             <div className="space-y-4">
               <div>
                 <label htmlFor="username" className="block text-sm font-medium text-gray-700">
-                  Username
+                  {t('username_label_no_colon')}
                 </label>
                 <input
                   id="username"
@@ -95,7 +97,7 @@ export default function Register() {
                   type="text"
                   required
                   className="input mt-1 focus:ring-indigo-500 focus:border-indigo-500"
-                  placeholder="Enter your username"
+                  placeholder={t('username_placeholder')}
                   value={formData.username}
                   onChange={(e) => setFormData({ ...formData, username: e.target.value })}
                 />
@@ -103,7 +105,7 @@ export default function Register() {
               
               <div>
                 <label htmlFor="email" className="block text-sm font-medium text-gray-700">
-                  Email address
+                  {t('email_label')}
                 </label>
                 <input
                   id="email"
@@ -111,7 +113,7 @@ export default function Register() {
                   type="email"
                   required
                   className="input mt-1 focus:ring-indigo-500 focus:border-indigo-500"
-                  placeholder="Enter your email"
+                  placeholder={t('email_placeholder')}
                   value={formData.email}
                   onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                 />
@@ -119,7 +121,7 @@ export default function Register() {
               
               <div>
                 <label htmlFor="password" className="block text-sm font-medium text-gray-700">
-                  Password
+                  {t('password_label')}
                 </label>
                 <input
                   id="password"
@@ -127,7 +129,7 @@ export default function Register() {
                   type="password"
                   required
                   className="input mt-1 focus:ring-indigo-500 focus:border-indigo-500"
-                  placeholder="Enter your password"
+                  placeholder={t('password_placeholder')}
                   value={formData.password}
                   onChange={(e) => setFormData({ ...formData, password: e.target.value })}
                 />
@@ -135,7 +137,7 @@ export default function Register() {
               
               <div>
                 <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700">
-                  Confirm Password
+                  {t('confirm_password_label')}
                 </label>
                 <input
                   id="confirmPassword"
@@ -143,7 +145,7 @@ export default function Register() {
                   type="password"
                   required
                   className="input mt-1 focus:ring-indigo-500 focus:border-indigo-500"
-                  placeholder="Confirm your password"
+                  placeholder={t('confirm_password_placeholder')}
                   value={formData.confirmPassword}
                   onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
                 />
@@ -157,7 +159,7 @@ export default function Register() {
                 className="w-full"
                 variant="primary"
               >
-                Create account
+                {t('create_account_button')}
               </Button>
             </div>
           </form>

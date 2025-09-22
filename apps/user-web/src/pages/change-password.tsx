@@ -10,8 +10,10 @@ import useApi from "../hooks/useApi";
 import Header from "../components/Header";
 import ChangePasswordForm from "../components/ChangePasswordForm";
 import { Card, LoadingSpinner } from "@point/ui";
+import { useTranslation } from "react-i18next";
 
 function ChangePassword() {
+  const { t } = useTranslation();
   const router = useRouter();
   const [user, setUser] = useState<User | null>(null);
   const { patch, loading, error } = useApi();
@@ -25,7 +27,7 @@ function ChangePassword() {
 
   const handleSubmit = async (formData: any) => {
     if (formData.newPassword !== formData.confirmNewPassword) {
-      toast.error("New password and confirm password do not match");
+      toast.error(t('passwords_do_not_match'));
       return;
     }
 
@@ -37,7 +39,7 @@ function ChangePassword() {
     );
 
     if (response) {
-      toast.success("Password changed successfully!");
+      toast.success(t('password_change_success'));
       router.push("/dashboard");
     }
   };
@@ -59,7 +61,7 @@ function ChangePassword() {
   return (
     <>
       <Head>
-        <title>Change Password - Point</title>
+        <title>{t('change_password_page_title')}</title>
       </Head>
 
       <div className="min-h-screen bg-gray-50">
@@ -70,10 +72,10 @@ function ChangePassword() {
             <Card>
               <div className="flex justify-between items-center mb-6">
                 <h2 className="text-2xl font-bold text-gray-900">
-                  Change Password
+                  {t('change_password_title')}
                 </h2>
                 <Link href="/dashboard" className="btn btn-secondary">
-                  Dashboard
+                  {t('dashboard_button')}
                 </Link>
               </div>
 

@@ -1,11 +1,13 @@
 import { Transaction } from "../types";
 import TransactionItem from "./TransactionItem";
+import { useTranslation } from "react-i18next";
 
 interface TransactionListProps {
   transactions: Transaction[];
 }
 
 const TransactionList = ({ transactions }: TransactionListProps) => {
+  const { t } = useTranslation();
   return (
     <div className="overflow-x-auto">
       <table className="min-w-full divide-y divide-gray-200">
@@ -15,31 +17,31 @@ const TransactionList = ({ transactions }: TransactionListProps) => {
               scope="col"
               className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
             >
-              Date
+              {t('date_header')}
             </th>
             <th
               scope="col"
               className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider"
             >
-              Type
+              {t('type_header')}
             </th>
             <th
               scope="col"
               className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider"
             >
-              Points
+              {t('points_header')}
             </th>
             <th
               scope="col"
               className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider"
             >
-              Status
+              {t('status_header')}
             </th>
             <th
               scope="col"
               className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider"
             >
-              Requested Amount
+              {t('requested_amount_header')}
             </th>
           </tr>
         </thead>

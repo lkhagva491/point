@@ -30,17 +30,17 @@ const Pagination: React.FC<PaginationProps> = ({
         disabled={currentPage === 1}
         className="btn btn-primary px-2 py-1 text-xs"
       >
-        Previous
+        ‹
       </button>
       <span className="self-center text-gray-700 text-sm">
-        Page {currentPage} of {totalPages}
+        {currentPage} / {totalPages}
       </span>
       <button
         onClick={handleNextPage}
         disabled={currentPage === totalPages}
         className="btn btn-primary px-2 py-1 text-xs"
       >
-        Next
+        ›
       </button>
     </div>
   );
