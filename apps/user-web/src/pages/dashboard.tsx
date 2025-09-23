@@ -71,12 +71,12 @@ function Dashboard() {
         <title>{t('dashboard_page_title')}</title>
       </Head>
 
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen bg-background-primary">
         <Header user={user} onLogout={handleLogout} />
 
         <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
           <div className="px-4 py-6 sm:px-0">
-            <Card>
+            <Card className="bg-background-secondary">
               <h2 className="text-2xl font-bold text-gray-900 mb-6">
                 {t('dashboard_title')}
               </h2>

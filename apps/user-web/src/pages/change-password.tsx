@@ -64,17 +64,17 @@ function ChangePassword() {
         <title>{t('change_password_page_title')}</title>
       </Head>
 
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen bg-background-primary">
         <Header user={user} onLogout={handleLogout} />
 
         <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
           <div className="px-4 py-6 sm:px-0">
-            <Card>
+            <Card className="bg-background-secondary">
               <div className="flex justify-between items-center mb-6">
                 <h2 className="text-2xl font-bold text-gray-900">
                   {t('change_password_title')}
                 </h2>
-                <Link href="/dashboard" className="btn btn-secondary">
+                <Link href="/dashboard" className="btn bg-gray-200 text-text-primary hover:bg-gray-300">
                   {t('dashboard_button')}
                 </Link>
               </div>

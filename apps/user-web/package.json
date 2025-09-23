@@ -4,10 +4,11 @@
   "private": true,
   "scripts": {
     "dev": "next dev -p 3003",
-    "build": "npm run build -w @point/ui && next build",
+    "build": "npm run sync:tokens && npm run build -w @point/ui && next build",
     "start": "next start -p 3003",
     "lint": "next lint",
-    "clean": "rimraf .next"
+    "clean": "rimraf .next",
+    "sync:tokens": "node scripts/sync-figma-tokens.js"
   },
   "dependencies": {
     "@headlessui/react": "^1.7.17",

@@ -54,23 +54,23 @@ function Deposit() {
         <title>{t('deposit_page_title')}</title>
       </Head>
 
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen bg-background-primary">
         <Header user={user} onLogout={handleLogout} />
 
         <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
           <div className="px-4 py-6 sm:px-0">
-            <Card>
+            <Card className="bg-background-secondary">
               <div className="flex justify-between items-center mb-6">
                 <h2 className="text-2xl font-bold text-gray-900">
                   {t('deposit_title')}
                 </h2>
                 <div className="flex space-x-2">
-                  <Link href="/dashboard" className="btn btn-secondary">
+                  <Link href="/dashboard" className="btn bg-gray-200 text-text-primary hover:bg-gray-300">
                     {t('dashboard_button')}
                   </Link>
                   <Link
                     href="/transaction-history"
-                    className="btn bg-purple-600 text-white hover:bg-purple-700"
+                    className="btn bg-brand-primary text-white hover:bg-brand-primary/80"
                   >
                     {t('view_history_link')}
                   </Link>

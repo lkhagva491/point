@@ -1,3 +1,6 @@
+const colors = require('./src/styles/tokens.json').colors;
+
+/** @type {import('tailwindcss').Config} */
 module.exports = {
   content: [
     './src/pages/**/*.{js,ts,jsx,tsx,mdx}',
@@ -8,6 +11,7 @@ module.exports = {
   theme: {
     extend: {
       colors: {
+        ...colors, // Spread the colors from tokens.json
         primary: {
           50: '#f0f9ff',
           100: '#e0f2fe',

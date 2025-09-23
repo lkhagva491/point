@@ -59,7 +59,7 @@ function TransactionHistory() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+      <div className="min-h-screen flex items-center justify-center bg-background-primary">
         <LoadingSpinner color="border-purple-600" size="xl" />
       </div>
     );
@@ -80,18 +80,18 @@ function TransactionHistory() {
 
         <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
           <div className="px-4 py-6 sm:px-0">
-            <Card>
+            <Card className="bg-background-secondary">
               <div className="flex justify-between items-center mb-6">
                 <h2 className="text-2xl font-bold text-gray-900">
                   {t('transaction_history_title')}
                 </h2>
                 <div className="flex space-x-2">
-                  <Link href="/dashboard" className="btn btn-secondary">
+                  <Link href="/dashboard" className="btn bg-gray-200 text-text-primary hover:bg-gray-300">
                     {t('dashboard_button')}
                   </Link>
                   <Link
                     href="/deposit"
-                    className="btn bg-green-600 text-white hover:bg-green-700"
+                    className="btn bg-brand-primary text-white hover:bg-brand-primary/80"
                   >
                     {t('deposit_link')}
                   </Link>
