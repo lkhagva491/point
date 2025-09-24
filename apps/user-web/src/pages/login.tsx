@@ -49,17 +49,17 @@ export default function Login() {
       <div className="bg-gradient-to-br from-gray-100 to-gray-200 min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
         <div className="max-w-sm w-full space-y-8 bg-white p-8 rounded-xl shadow-lg">
           <div>
-            <h2 className="mt-6 text-center text-3xl sm:text-4xl font-extrabold text-gray-900">
+            <h2 className="mt-6 text-center text-3xl sm:text-4xl font-extrabold text-text-primary">
               {t('login_header')}
             </h2>
             <p className="mt-2 text-center text-sm sm:text-base text-gray-600">
               Or{' '}
-              <Link href="/register" className="font-medium text-primary-600 hover:text-primary-500">
+              <Link href="/register" className="font-medium text-text-link-primary hover:text-button-primary">
                 create a new account
               </Link>
               {' '}
               or{' '}
-              <Link href="/" className="font-medium text-primary-600 hover:text-primary-500">
+              <Link href="/" className="font-medium text-text-link-primary hover:text-button-primary">
                 go to Home
               </Link>
             </p>
@@ -67,14 +67,14 @@ export default function Login() {
           
           <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
             {error && (
-              <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-md">
+              <div className="bg-text-error-primary/10 border border-text-error-primary text-text-error-primary px-4 py-3 rounded-md">
                 {error}
               </div>
             )}
             
             <div className="space-y-4">
               <div>
-                <label htmlFor="email" className="block text-sm font-medium text-gray-700">
+                <label htmlFor="email" className="block text-sm font-medium text-text-primary">
                   {t('email_label')}
                 </label>
                 <input
@@ -90,7 +90,7 @@ export default function Login() {
               </div>
               
               <div>
-                <label htmlFor="password" className="block text-sm font-medium text-gray-700">
+                <label htmlFor="password" className="block text-sm font-medium text-text-primary">
                   {t('password_label')}
                 </label>
                 <input
@@ -111,7 +111,7 @@ export default function Login() {
               <Button
                 type="submit"
                 loading={loading}
-                className="w-full"
+                className="w-full bg-button-primary hover:bg-button-primary/80 text-white"
                 variant="primary"
               >
                 {t('login_button')}

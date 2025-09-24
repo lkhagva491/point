@@ -19,7 +19,7 @@ export default function Home() {
         <meta name="description" content={t('home_meta_description')} />
       </Head>
       
-      <div className="min-h-screen bg-background-primary">
+      <div className="min-h-screen bg-background-secondary">
         {/* Header */}
         <header className="bg-background-secondary shadow">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -51,12 +51,12 @@ export default function Home() {
                 </p>
                 <div className="mt-5 max-w-md mx-auto sm:flex sm:justify-center md:mt-8">
                   <div className="rounded-md shadow">
-                    <Link href="/register" className="w-full flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-text-primary bg-background-secondary hover:bg-background-third md:py-4 md:text-lg md:px-10">
+                    <Link href="/register" className="w-full flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-text-primary bg-background-secondary hover:bg-background-secondary/80 md:py-4 md:text-lg md:px-10">
                       {t('get_started_button')}
                     </Link>
                   </div>
                   <div className="mt-3 rounded-md shadow sm:mt-0 sm:ml-3">
-                    <Link href="/login" className="w-full flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-text-primary bg-brand-primary hover:bg-brand-primary/80 md:py-4 md:text-lg md:px-10">
+                    <Link href="/login" className="w-full flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-text-primary bg-background-primary hover:bg-background-primary/80 md:py-4 md:text-lg md:px-10">
                       {t('signin_button')}
                     </Link>
                   </div>

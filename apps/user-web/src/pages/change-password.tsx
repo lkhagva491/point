@@ -64,7 +64,7 @@ function ChangePassword() {
         <title>{t('change_password_page_title')}</title>
       </Head>
 
-      <div className="min-h-screen bg-background-primary">
+      <div className="min-h-screen bg-background-secondary">
         <Header user={user} onLogout={handleLogout} />
 
         <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
@@ -74,7 +74,7 @@ function ChangePassword() {
                 <h2 className="text-2xl font-bold text-gray-900">
                   {t('change_password_title')}
                 </h2>
-                <Link href="/dashboard" className="btn bg-gray-200 text-text-primary hover:bg-gray-300">
+                <Link href="/dashboard" className="btn bg-button-primary hover:bg-button-primary/80 text-white">
                   {t('dashboard_button')}
                 </Link>
               </div>

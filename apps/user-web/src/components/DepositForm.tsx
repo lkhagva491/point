@@ -22,7 +22,7 @@ const DepositForm = ({ onSubmit, loading, error }: DepositFormProps) => {
   return (
     <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
       {error && (
-        <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-md">
+        <div className="bg-text-error-primary/10 border border-text-error-primary text-text-error-primary px-4 py-3 rounded-md">
           {error}
         </div>
       )}
@@ -31,7 +31,7 @@ const DepositForm = ({ onSubmit, loading, error }: DepositFormProps) => {
         <div>
           <label
             htmlFor="amount"
-            className="block text-sm font-medium text-gray-700"
+            className="block text-sm font-medium text-text-primary"
           >
             {t('amount_to_deposit_label')}
           </label>
@@ -52,7 +52,7 @@ const DepositForm = ({ onSubmit, loading, error }: DepositFormProps) => {
         <Button
           type="submit"
           loading={loading}
-          className="w-full"
+                className="w-full bg-button-primary hover:bg-button-primary/80 text-white"
           variant="primary"
         >
           {t('submit_deposit_request_button')}

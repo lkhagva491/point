@@ -24,7 +24,7 @@ const ChangePasswordForm = ({ onSubmit, loading, error }: ChangePasswordFormProp
   return (
     <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
       {error && (
-        <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-md">
+        <div className="bg-text-error-primary/10 border border-text-error-primary text-text-error-primary px-4 py-3 rounded-md">
           {error}
         </div>
       )}
@@ -98,7 +98,7 @@ const ChangePasswordForm = ({ onSubmit, loading, error }: ChangePasswordFormProp
         <Button
           type="submit"
           loading={loading}
-          className="w-full"
+          className="w-full bg-button-primary hover:bg-button-primary/80 text-white"
           variant="primary"
         >
           {t('change_password_button')}
